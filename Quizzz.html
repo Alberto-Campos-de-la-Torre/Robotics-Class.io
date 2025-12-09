@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Reto de Diseño Lógico: Crea tu Propia Máquina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3a8a; /* Dark Blue */
+            border-bottom: 2px solid #93c5fd; /* Light Blue */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .instruction-box {
+            background-color: #eef2ff; /* Light Indigo */
+            border-left: 4px solid #4f46e5; /* Indigo */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .example-text {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold text-gray-900">Reto de Diseño Lógico: Crea tu Propia Máquina</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="card max-w-5xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4">El Desafío</h2>
+            <p class="text-lg text-gray-700 mb-6">
+                Has demostrado que puedes analizar y verificar circuitos existentes. Ahora, es tu turno de ser el ingeniero. Tu misión es diseñar un sistema lógico completo desde la concepción hasta el plan de implementación. El sistema debe resolver un problema de tu elección, ya sea de la vida real, de un videojuego, o de tu imaginación.
+            </p>
+
+            <h2 class="text-2xl font-bold mb-4">Requisitos del Sistema</h2>
+            <ul class="list-disc list-inside space-y-2 text-lg bg-gray-50 p-6 rounded-lg mb-8">
+                <li>El sistema debe tener al menos <strong>4 entradas</strong> booleanas (sensores, interruptores, etc.).</li>
+                <li>El sistema debe tener al menos <strong>2 salidas</strong> que, por ahora, deben ser <strong>luces indicadoras (LEDs)</strong>.</li>
+                <li>La lógica debe ser lo suficientemente compleja como para requerir una combinación de diferentes tipos de compuertas lógicas.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mb-4">Tu Entregable: Un Documento de Diseño</h2>
+            <p class="text-lg text-gray-700 mb-6">
+                Tu entregable será un <strong>único documento</strong> (creado en Word, Google Docs, o un programa similar) que contenga las siguientes cinco secciones. Sé claro, conciso y preciso en cada punto.
+            </p>
+
+            <div class="space-y-8">
+                <!-- Sección 1: Descripción del Problema -->
+                <div>
+                    <h3 class="section-title">1. Descripción del Problema y Escenario</h3>
+                    <p class="mb-2 text-gray-600">En tu documento, describe la máquina que estás diseñando. ¿Qué problema resuelve? ¿Cuál es su propósito? Define claramente qué representa cada una de tus 4 (o más) entradas y 2 (o más) salidas de luz.</p>
+                    <div class="instruction-box">
+                        <p class="font-semibold">Ejemplo de cómo redactarlo:</p>
+                        <p class="example-text mt-2">'Mi máquina es un sistema de seguridad para una bóveda. Entradas: A (Sensor de Puerta Cerrada), B (Código Correcto Ingresado), C (Llave de Supervisor Girada), D (Botón de Pánico). Salidas: X (Luz Verde de Acceso Permitido), Y (Luz Roja de Alarma Activada)...'</p>
+                    </div>
+                </div>
+
+                <!-- Sección 2: Ecuaciones Lógicas -->
+                <div>
+                    <h3 class="section-title">2. Ecuaciones Lógicas</h3>
+                    <p class="mb-2 text-gray-600">Añade una sección en tu documento con las ecuaciones booleanas para cada una de tus salidas. Estas ecuaciones deben representar las reglas de funcionamiento de tu máquina.</p>
+                     <div class="instruction-box">
+                        <p class="font-semibold">Ejemplo:</p>
+                        <p class="example-text mt-2">'Salida X (Luz Verde) = A · B · C · ¬D'<br>'Salida Y (Luz Roja) = D + ¬A'</p>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Tabla de Verdad -->
+                <div>
+                    <h3 class="section-title">3. Tabla de Verdad Completa</h3>
+                    <p class="mb-2 text-gray-600">Construye la tabla de verdad completa para tu sistema en tu documento. Con 4 entradas, ¡tendrás 16 filas! La tabla debe mostrar los estados de todas las entradas y las salidas resultantes. Asegúrate de seguir el orden binario estándar para las entradas, como se muestra en el ejemplo.</p>
+                    <div class="instruction-box">
+                        <p class="font-semibold">Utiliza las herramientas de tabla de tu editor de texto para crear un formato claro. Aquí tienes un ejemplo de cómo empezar:</p>
+                        <pre class="example-text mt-2 bg-white p-2 rounded whitespace-pre-wrap">A | B | C | D || X | Y
+-----------------------
+0 | 0 | 0 | 0 || ? | ?
+0 | 0 | 0 | 1 || ? | ?
+0 | 0 | 1 | 0 || ? | ?
+0 | 0 | 1 | 1 || ? | ?
+0 | 1 | 0 | 0 || ? | ?
+0 | 1 | 0 | 1 || ? | ?
+0 | 1 | 1 | 0 || ? | ?
+0 | 1 | 1 | 1 || ? | ?
+...y así hasta la fila 16 (1 | 1 | 1 | 1).</pre>
+                    </div>
+                </div>
+                
+                <!-- Sección 4: Lista de Componentes -->
+                <div>
+                    <h3 class="section-title">4. Lista de Componentes (Circuitos Integrados)</h3>
+                    <p class="mb-2 text-gray-600">Basado en tus ecuaciones lógicas, crea una lista en tu documento de los circuitos integrados (ICs) que necesitarías para construir tu diseño en un protoboard.</p>
+                     <div class="instruction-box">
+                        <p class="font-semibold">Ejemplo:</p>
+                        <p class="example-text mt-2">'1x 7404 (NOT), 2x 7408 (AND), 1x 7432 (OR)...'</p>
+                    </div>
+                </div>
+
+                <!-- Sección 5: Plan de Simulación -->
+                <div>
+                    <h3 class="section-title">5. Plan de Simulación y Verificación</h3>
+                    <p class="mb-2 text-gray-600">En la sección final de tu documento, describe cómo verificarías tu diseño en Tinkercad. ¿Qué usarías para las entradas y salidas? ¿Cómo confirmarías que el circuito se comporta como tu tabla de verdad?</p>
+                     <div class="instruction-box">
+                        <p class="font-semibold">Ejemplo:</p>
+                        <p class="example-text mt-2">'Usaría 4 interruptores DIP para las entradas A, B, C y D. Usaría 2 LEDs (uno verde para la Salida X, uno rojo para la Salida Y). Probaría al menos 5 combinaciones clave de la tabla de verdad para asegurar que los LEDs se enciendan y apaguen como se espera...'</p>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="mt-12 text-center bg-gray-100 p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-gray-800">Siguientes Pasos</h3>
+                <p class="my-4">Una vez que tu documento de diseño esté completo, el siguiente paso es llevarlo a la realidad. Usa tu plan para construir y simular el circuito.</p>
+                <a href="https://www.tinkercad.com/circuits" target="_blank" class="inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    ¡Ir a Tinkercad para Simular!
+                </a>
+             </div>
+        </div>
+    </main>
+
+</body>
+</html>
+

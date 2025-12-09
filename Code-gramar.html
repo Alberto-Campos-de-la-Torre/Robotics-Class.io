@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 9: Pilares de la Programación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .code-block .keyword { color: #93c5fd; } 
+        .code-block .type { color: #818cf8; } 
+        .code-block .function { color: #a78bfa; } 
+        .code-block .comment { color: #64748b; } 
+        .code-block .string { color: #f472b6; } 
+        .code-block .number { color: #34d399; }
+        .code-block .operator { color: #f472b6; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 9: Pilares de la Programación</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#variables" class="text-gray-600 hover:text-blue-600">Variables</a>
+                <a href="#syntax" class="text-gray-600 hover:text-blue-600">Sintaxis</a>
+                <a href="#control-flow" class="text-gray-600 hover:text-blue-600">Control</a>
+                <a href="#activity" class="text-gray-600 hover:text-blue-600">Actividad</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="warmup" class="text-center mb-20 fade-in">
+            <h2 class="text-5xl font-extrabold mb-4 text-blue-600">La Gramática del Código</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Así como un idioma tiene reglas gramaticales para formar oraciones, un lenguaje de programación tiene una <strong>sintaxis</strong> que debemos seguir. Hoy aprenderemos las reglas esenciales del C++, el lenguaje que da vida a nuestros robots y circuitos.</p>
+        </section>
+
+        <section id="variables" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Almacenando Información: Variables y Tipos de Datos</h3>
+            <div class="card max-w-4xl mx-auto">
+                <p class="mb-6 text-lg">Una <strong>variable</strong> es un contenedor con nombre para guardar datos. Cada pieza de información en un programa tiene un <strong>tipo</strong>, que le dice al microcontrolador cuánta memoria usar y qué clase de datos guardar. Los más importantes son:</p>
+                <ul class="space-y-4">
+                    <li><strong><code>int</code> (Entero):</strong> Para números enteros sin decimales, positivos o negativos. Ocupa 2 bytes en un Arduino UNO (rango de -32,768 a 32,767). <br> <code class="code-block inline-block mt-1"><span class="type">int</span> numeroDePasos <span class="operator">=</span> <span class="number">100</span>;</code></li>
+                    
+                    <li><strong><code>float</code> (Flotante):</strong> Para números con decimales. Son más precisos pero también usan más memoria (4 bytes). <br> <code class="code-block inline-block mt-1"><span class="type">float</span> voltaje <span class="operator">=</span> <span class="number">4.85</span>;</code></li>
+
+                    <li><strong><code>bool</code> (Booleano):</strong> Solo puede tener dos valores: <code>true</code> (verdadero) o <code>false</code> (falso). Es la base de toda la lógica y las decisiones. <br> <code class="code-block inline-block mt-1"><span class="type">bool</span> sensorActivado <span class="operator">=</span> <span class="keyword">false</span>;</code></li>
+
+                    <li><strong><code>char</code> (Carácter):</strong> Almacena un único carácter, como una letra o un símbolo. Se escribe entre comillas simples. <br> <code class="code-block inline-block mt-1"><span class="type">char</span> inicial <span class="operator">=</span> <span class="string">'A'</span>;</code></li>
+
+                    <li><strong><code>String</code> (Cadena de texto):</strong> Para guardar palabras o frases completas. Es un tipo de dato más complejo pero increíblemente útil. Se escribe entre comillas dobles. <br> <code class="code-block inline-block mt-1"><span class="type">String</span> mensaje <span class="operator">=</span> <span class="string">"Sistema Activado"</span>;</code></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="syntax" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Reglas Esenciales del Lenguaje (Sintaxis)</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Punto y Coma (;)</h4>
+                    <p>Cada instrucción o "frase" en C++ debe terminar con un punto y coma. Es como el punto final de una oración. Olvidarlo es uno de los errores más comunes.</p>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Llaves ({ })</h4>
+                    <p>Las llaves se usan para agrupar instrucciones en bloques de código. Todo lo que está dentro de las llaves de una función o un condicional pertenece a ese bloque.</p>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Comentarios (//)</h4>
+                    <p>Son notas para los humanos que el compilador ignora. Se usan para explicar qué hace el código, lo que es vital para entender programas complejos.</p>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Tabulación</h4>
+                    <p>El código dentro de un bloque de llaves <code>{}</code> se indenta (se le da un espacio a la izquierda). Esto no afecta al programa, pero es <strong>crucial</strong> para que los humanos puedan leerlo fácilmente.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="control-flow" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Controlando el Flujo del Programa</h3>
+            <div class="space-y-8">
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4">Condicionales: <code>if / else</code></h4>
+                    <p class="mb-4">Permiten que tu programa tome diferentes caminos según una condición. Es la herramienta principal para la toma de decisiones.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h5 class="font-bold text-center mb-2">Plan (Pseudocódigo)</h5>
+                            <div class="code-block h-full">
+<span class="keyword">SI</span> temperatura > 25 <span class="keyword">ENTONCES</span>
+&nbsp;&nbsp;<span class="keyword">ESCRIBIR</span> "Hace calor"
+<span class="keyword">SINO</span>
+&nbsp;&nbsp;<span class="keyword">ESCRIBIR</span> "No hace calor"
+<span class="keyword">FIN SI</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-center mb-2">Código (C++)</h5>
+                            <div class="code-block h-full">
+<span class="keyword">if</span> (temperatura <span class="operator">></span> <span class="number">25</span>) {
+&nbsp;&nbsp;<span class="function">Serial.println</span>(<span class="string">"Hace calor"</span>);
+} <span class="keyword">else</span> {
+&nbsp;&nbsp;<span class="function">Serial.println</span>(<span class="string">"No hace calor"</span>);
+}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4">Bucles: <code>for</code> y <code>while</code></h4>
+                    <p class="mb-4">Se usan para repetir un bloque de código. El bucle <code>for</code> es ideal para repetir un número conocido de veces, y <code>while</code> para repetir mientras se cumpla una condición.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h5 class="font-bold text-center mb-2">Plan (Pseudocódigo)</h5>
+                            <div class="code-block h-full">
+<span class="comment">// Bucle PARA</span>
+<span class="keyword">PARA</span> i=0 <span class="keyword">HASTA</span> 2 <span class="keyword">HACER</span>
+&nbsp;&nbsp;<span class="keyword">ESCRIBIR</span> "Hola"
+<span class="keyword">FIN PARA</span>
+
+<span class="comment">// Bucle MIENTRAS</span>
+<span class="keyword">MIENTRAS</span> boton_no_presionado <span class="keyword">HACER</span>
+&nbsp;&nbsp;... esperar ...
+<span class="keyword">FIN MIENTRAS</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-center mb-2">Código (C++)</h5>
+                            <div class="code-block h-full">
+<span class="comment">// Bucle for</span>
+<span class="keyword">for</span> (<span class="type">int</span> i <span class="operator">=</span> <span class="number">0</span>; i <span class="operator"><</span> <span class="number">3</span>; i<span class="operator">++</span>) {
+&nbsp;&nbsp;<span class="function">Serial.println</span>(<span class="string">"Hola"</span>);
+}
+
+<span class="comment">// Bucle while</span>
+<span class="keyword">while</span>(<span class="function">digitalRead</span>(pinBoton) <span class="operator">==</span> <span class="keyword">LOW</span>) {
+&nbsp;&nbsp;<span class="comment">// ... esperar ...</span>
+}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividad Práctica: De Pseudocódigo a Código</h3>
+            <div class="card max-w-4xl mx-auto mb-8">
+                <h4 class="text-2xl font-bold text-center mb-4">Problema: Alarma de Temperatura</h4>
+                <p class="text-lg text-gray-600 text-center mb-6">Vamos a diseñar el código para una alarma simple. Un sensor de temperatura nos da un valor. Si la temperatura supera los 40 grados, un LED rojo de alarma debe encenderse. Si está por debajo de 10 grados, un LED azul de advertencia debe encenderse. Si está entre esos valores, ambos LEDs deben estar apagados.</p>
+            </div>
+            <div class="card max-w-4xl mx-auto">
+                 <h4 class="text-xl font-bold mb-4">1. El Plan (Pseudocódigo)</h4>
+                 <div class="code-block mb-8">
+<span class="keyword">INICIO</span>
+&nbsp;&nbsp;<span class="keyword">MIENTRAS</span> verdadero <span class="keyword">HACER</span>
+&nbsp;&nbsp;&nbsp;&nbsp;Definir temperatura Como Entero
+&nbsp;&nbsp;&nbsp;&nbsp;temperatura = LEER SENSOR
+&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">SI</span> temperatura > 40 <span class="keyword">ENTONCES</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENCENDER LED ROJO
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APAGAR LED AZUL
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">SINO SI</span> temperatura < 10 <span class="keyword">ENTONCES</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APAGAR LED ROJO
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENCENDER LED AZUL
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">SINO</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APAGAR LED ROJO
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APAGAR LED AZUL
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">FIN SI</span>
+&nbsp;&nbsp;<span class="keyword">FIN MIENTRAS</span>
+<span class="keyword">FIN</span>
+                 </div>
+                 
+                 <h4 class="text-xl font-bold mb-4">2. Tu Tarea: Escribe el Código C++</h4>
+                 <p class="mb-4">Traduce el plan a código de Arduino. Usa <code>int temperatura = analogRead(A0) / 4;</code> para simular una lectura de 0 a 100 grados. Asigna el LED rojo al pin 13 y el LED azul al pin 12.</p>
+                 <textarea id="user-code" rows="18" class="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono" placeholder="void setup() { ... }&#10;&#10;void loop() { ... }"></textarea>
+                 <div class="text-center mt-4">
+                    <button onclick="toggleAnswer('solution-code')" class="bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition">Mostrar Solución Sugerida</button>
+                 </div>
+            </div>
+        </section>
+
+        <div id="solution-code" class="hidden fade-in mb-20">
+            <div class="card max-w-4xl mx-auto">
+                 <h4 class="text-xl font-bold mb-4">3. Solución Sugerida (Código C++)</h4>
+                 <div class="code-block">
+<span class="type">const int</span> ledRojoPin <span class="operator">=</span> <span class="number">13</span>;
+<span class="type">const int</span> ledAzulPin <span class="operator">=</span> <span class="number">12</span>;
+<span class="type">const int</span> sensorPin <span class="operator">=</span> A0;
+
+<span class="type">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(ledRojoPin, <span class="keyword">OUTPUT</span>);
+  <span class="function">pinMode</span>(ledAzulPin, <span class="keyword">OUTPUT</span>);
+  <span class="function">pinMode</span>(sensorPin, <span class="keyword">INPUT</span>);
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="type">int</span> lecturaSensor <span class="operator">=</span> <span class="function">analogRead</span>(sensorPin);
+  <span class="type">int</span> temperatura <span class="operator">=</span> lecturaSensor <span class="operator">/</span> <span class="number">4</span>; <span class="comment">// Simula 0-100 grados</span>
+
+  <span class="keyword">if</span> (temperatura <span class="operator">></span> <span class="number">40</span>) {
+    <span class="function">digitalWrite</span>(ledRojoPin, <span class="keyword">HIGH</span>);
+    <span class="function">digitalWrite</span>(ledAzulPin, <span class="keyword">LOW</span>);
+  } <span class="keyword">else if</span> (temperatura <span class="operator"><</span> <span class="number">10</span>) {
+    <span class="function">digitalWrite</span>(ledRojoPin, <span class="keyword">LOW</span>);
+    <span class="function">digitalWrite</span>(ledAzulPin, <span class="keyword">HIGH</span>);
+  } <span class="keyword">else</span> {
+    <span class="function">digitalWrite</span>(ledRojoPin, <span class="keyword">LOW</span>);
+    <span class="function">digitalWrite</span>(ledAzulPin, <span class="keyword">LOW</span>);
+  }
+}
+                 </div>
+            </div>
+        </div>
+        
+        <section id="simulation" class="text-center fade-in">
+             <h3 class="text-4xl font-bold mb-4">¡A Probarlo en Tinkercad!</h3>
+             <div class="card max-w-4xl mx-auto">
+                <p class="text-lg text-gray-700 mb-6">Ahora, construye el circuito de la alarma de temperatura en Tinkercad. Necesitarás un potenciómetro (para simular el sensor), dos LEDs (uno rojo, uno azul) con sus resistencias, y un Arduino. Carga el código que escribiste y comprueba si funciona como esperabas al girar el potenciómetro.</p>
+                
+                <a href="https://www.tinkercad.com/circuits" target="_blank" class="mt-6 inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    Abrir Tinkercad Circuits
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        function toggleAnswer(id) {
+            const answerDiv = document.getElementById(id);
+            answerDiv.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>
+

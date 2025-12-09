@@ -1,0 +1,526 @@
+<!-- Chosen Palette: Calm Harmony -->
+<!-- Application Structure Plan: This SPA is a focused lesson on logic gates. It starts with a real-world analogy, explains core concepts (AND, OR, NOT), and features an interactive canvas playground. New sections explain translating statements to logic and the physical nature of ICs. An expanded interactive truth table builder activity with multiple exercises has been added before the final simulation practice to reinforce understanding of boolean expressions. The lesson concludes with assessments. -->
+<!-- Visualization & Content Choices: 1. Core Concepts -> Goal: Inform -> Method: A grid of cards with symbols and truth tables. -> Interaction: Hover effects. -> Justification: A clear, organized way to present the fundamental building blocks. 2. Logic Playground Activity -> Goal: Apply -> Method: An interactive canvas where toggles control a visual logic circuit. -> Interaction: Toggling inputs and seeing real-time updates. -> Justification: Makes abstract concepts tangible. 3. Truth Table Builder Activity -> Goal: Analyze -> Method: An expanded section with a guided example and multiple interactive tables for different logical statements where users write the equation and fill the table. -> Interaction: User input with instant validation. -> Justification: Tests the students' ability to translate requirements into boolean logic and evaluate expressions step-by-step, a crucial skill before simulation. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 4: Compuertas Lógicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .truth-table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        .truth-table th, .truth-table td {
+            border: 1px solid #d1d5db;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        .truth-table th {
+            background-color: #f3f4f6;
+        }
+        .truth-table input {
+            width: 40px;
+            text-align: center;
+            border: 2px solid #d1d5db;
+            border-radius: 0.25rem;
+        }
+        .truth-table input.correct {
+            border-color: #22c55e;
+            background-color: #dcfce7;
+        }
+        .truth-table input.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+        .gate-symbol {
+            font-family: monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 1rem;
+            border: 2px solid #6b7280;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+        canvas {
+            background-color: #e5e7eb;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 4: Compuertas Lógicas</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#concepts" class="text-gray-600 hover:text-blue-600">Compuertas</a>
+                <a href="#activity" class="text-gray-600 hover:text-blue-600">Actividad 1</a>
+                <a href="#truth-table-activity" class="text-gray-600 hover:text-blue-600">Actividad 2</a>
+                <a href="#simulation" class="text-gray-600 hover:text-blue-600">Simulación</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="warmup" class="text-center mb-20 fade-in">
+            <h2 class="text-5xl font-extrabold mb-4 text-blue-600">Tomando Decisiones Simples</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Para ver una película en casa, necesitas dos cosas: que haya electricidad <strong>Y</strong> que la televisión esté encendida. Si falta una de las dos, no puedes verla. Esta es la base de la lógica digital: tomar decisiones a partir de condiciones simples. Hoy aprenderemos a construir estas "decisiones" en un circuito.</p>
+        </section>
+
+        <section id="concepts" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Los Ladrillos del Pensamiento Digital</h3>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Compuerta AND (Y)</h4>
+                    <div class="text-center"><span class="gate-symbol">A · B</span></div>
+                    <p class="mt-4 text-justify">La salida es 1 (ALTO) solo si <strong>todas</strong> sus entradas son 1.</p>
+                    <table class="truth-table">
+                        <thead><tr><th>A</th><th>B</th><th>Salida</th></tr></thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>1</td><td>0</td><td>0</td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Compuerta OR (O)</h4>
+                    <div class="text-center"><span class="gate-symbol">A + B</span></div>
+                    <p class="mt-4 text-justify">La salida es 1 si <strong>al menos una</strong> de sus entradas es 1.</p>
+                     <table class="truth-table">
+                        <thead><tr><th>A</th><th>B</th><th>Salida</th></tr></thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">Compuerta NOT (NO)</h4>
+                    <div class="text-center"><span class="gate-symbol">¬A</span></div>
+                    <p class="mt-4 text-justify">La salida es la <strong>inversa</strong> de la entrada. Si la entrada es 1, la salida es 0, y viceversa.</p>
+                     <table class="truth-table">
+                         <thead><tr><th>A</th><th>Salida</th></tr></thead>
+                         <tbody>
+                            <tr><td>0</td><td>1</td></tr>
+                            <tr><td>1</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <section id="activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividad 1: Logic Playground</h3>
+            <div class="card max-w-5xl mx-auto">
+                <p class="text-lg text-gray-600 text-center mb-6">Un robot de seguridad debe activar una alarma si se cumple esta lógica: La alarma suena SI (el sensor de movimiento está activo <strong>Y</strong> la puerta está cerrada) <strong>O</strong> SI (el sensor de la ventana está activo). Usa los interruptores para probar las diferentes combinaciones y ver cómo fluye la señal en el diagrama.</p>
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="flex-shrink-0 grid grid-cols-1 gap-4 text-center p-6 bg-gray-100 rounded-lg">
+                        <div>
+                            <label class="font-semibold block mb-2">Sensor de Movimiento</label>
+                            <input type="checkbox" id="logic-movimiento" class="h-8 w-8">
+                        </div>
+                        <div>
+                            <label class="font-semibold block mb-2">Sensor de Puerta</label>
+                            <input type="checkbox" id="logic-puerta" class="h-8 w-8">
+                        </div>
+                        <div>
+                            <label class="font-semibold block mb-2">Sensor de Ventana</label>
+                            <input type="checkbox" id="logic-ventana" class="h-8 w-8">
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <canvas id="logic-canvas" width="600" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="truth-table-activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividad 2: De Enunciados a Tablas de Verdad</h3>
+            <div class="card max-w-4xl mx-auto">
+                 <h4 class="text-3xl font-bold text-center mb-6">Ejemplo Guiado</h4>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4 text-center"><strong>Enunciado:</strong> "Una luz de advertencia se enciende si el sensor A está activo <strong>Y</strong> el sensor B <strong>NO</strong> está activo."</p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <p class="text-lg text-center font-semibold"><strong>Ecuación Lógica:</strong> <code class="bg-gray-200 px-2 py-1 rounded">Salida = A AND (NOT B)</code></p>
+                    <table class="truth-table mx-auto mt-4">
+                        <thead><tr><th>A</th><th>B</th><th>NOT B</th><th>Salida (A · ¬B)</th></tr></thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card max-w-4xl mx-auto mt-8">
+                <h4 class="text-3xl font-bold text-center mb-6">Ejercicio 1</h4>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4 text-center"><strong>Enunciado:</strong> "Un sistema de riego se activa si hay sol (A) <strong>Y</strong> la humedad del suelo es baja (B), <strong>O</strong> si el interruptor manual (C) está encendido."</p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold mb-4">1. Escribe la Ecuación Lógica:</p>
+                    <input type="text" id="user-equation-1" class="w-full p-2 border-2 border-gray-300 rounded-md font-mono" placeholder="Ej: Riego = ...">
+                    <p class="text-lg font-semibold my-4">2. Completa la Tabla de Verdad:</p>
+                    <table id="interactive-truth-table-1" class="truth-table mx-auto">
+                        <thead>
+                            <tr><th>Sol (A)</th><th>Humedad (B)</th><th>Manual (C)</th><th>A AND B</th><th>Riego (Salida)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-col="0" data-row="0"></td><td><input type="text" maxlength="1" data-col="1" data-row="0"></td></tr>
+                            <tr><td>0</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-col="0" data-row="1"></td><td><input type="text" maxlength="1" data-col="1" data-row="1"></td></tr>
+                            <tr><td>0</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-col="0" data-row="2"></td><td><input type="text" maxlength="1" data-col="1" data-row="2"></td></tr>
+                            <tr><td>0</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-col="0" data-row="3"></td><td><input type="text" maxlength="1" data-col="1" data-row="3"></td></tr>
+                            <tr><td>1</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-col="0" data-row="4"></td><td><input type="text" maxlength="1" data-col="1" data-row="4"></td></tr>
+                            <tr><td>1</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-col="0" data-row="5"></td><td><input type="text" maxlength="1" data-col="1" data-row="5"></td></tr>
+                            <tr><td>1</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-col="0" data-row="6"></td><td><input type="text" maxlength="1" data-col="1" data-row="6"></td></tr>
+                            <tr><td>1</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-col="0" data-row="7"></td><td><input type="text" maxlength="1" data-col="1" data-row="7"></td></tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center mt-6">
+                        <button id="check-table-btn-1" class="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Verificar Tabla</button>
+                        <p id="table-feedback-1" class="mt-4 text-lg font-medium h-6"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card max-w-4xl mx-auto mt-8">
+                <h4 class="text-3xl font-bold text-center mb-6">Ejercicio 2</h4>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4 text-center"><strong>Enunciado:</strong> "Una luz de cabina se enciende si el piloto (A) activa su interruptor, <strong>O</strong> si el copiloto (B) activa su interruptor, pero <strong>NO</strong> si ambos lo activan al mismo tiempo (es una compuerta OR Exclusiva o XOR)."</p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold mb-4">1. Escribe la Ecuación Lógica:</p>
+                    <input type="text" id="user-equation-2" class="w-full p-2 border-2 border-gray-300 rounded-md font-mono" placeholder="Ej: Luz = ...">
+                    <p class="text-lg font-semibold my-4">2. Completa la Tabla de Verdad:</p>
+                    <table id="interactive-truth-table-2" class="truth-table mx-auto">
+                        <thead>
+                            <tr><th>Piloto (A)</th><th>Copiloto (B)</th><th>Luz (Salida)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="0"></td></tr>
+                            <tr><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="1"></td></tr>
+                            <tr><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="2"></td></tr>
+                            <tr><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="3"></td></tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center mt-6">
+                        <button id="check-table-btn-2" class="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Verificar Tabla</button>
+                        <p id="table-feedback-2" class="mt-4 text-lg font-medium h-6"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card max-w-4xl mx-auto mt-8">
+                <h4 class="text-3xl font-bold text-center mb-6">Ejercicio 3 (Reto)</h4>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4 text-center"><strong>Enunciado:</strong> "Un sistema de seguridad se desactiva (Salida = 1) si se ingresa la clave correcta (A) <strong>Y</strong> se gira la llave (B), <strong>O</strong> si el supervisor (C) anula el sistema, pero solo si la alarma principal (D) <strong>NO</strong> está sonando."</p>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold mb-4">1. Escribe la Ecuación Lógica:</p>
+                    <input type="text" id="user-equation-3" class="w-full p-2 border-2 border-gray-300 rounded-md font-mono" placeholder="Ej: Desactivar = ...">
+                     <p class="text-lg font-semibold my-4">2. Completa la Tabla de Verdad (solo la salida final):</p>
+                    <table id="interactive-truth-table-3" class="truth-table mx-auto text-sm">
+                        <thead><tr><th>Clave (A)</th><th>Llave (B)</th><th>Supervisor (C)</th><th>Alarma (D)</th><th>Desactivar (Salida)</th></tr></thead>
+                        <tbody>
+                           <tr><td>0</td><td>0</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="0"></td></tr>
+                           <tr><td>0</td><td>0</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="1"></td></tr>
+                           <tr><td>0</td><td>0</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="2"></td></tr>
+                           <tr><td>0</td><td>0</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="3"></td></tr>
+                           <tr><td>0</td><td>1</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="4"></td></tr>
+                           <tr><td>0</td><td>1</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="5"></td></tr>
+                           <tr><td>0</td><td>1</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="6"></td></tr>
+                           <tr><td>0</td><td>1</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="7"></td></tr>
+                           <tr><td>1</td><td>0</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="8"></td></tr>
+                           <tr><td>1</td><td>0</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="9"></td></tr>
+                           <tr><td>1</td><td>0</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="10"></td></tr>
+                           <tr><td>1</td><td>0</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="11"></td></tr>
+                           <tr><td>1</td><td>1</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="12"></td></tr>
+                           <tr><td>1</td><td>1</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="13"></td></tr>
+                           <tr><td>1</td><td>1</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="14"></td></tr>
+                           <tr><td>1</td><td>1</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="15"></td></tr>
+                        </tbody>
+                    </table>
+                     <div class="text-center mt-6">
+                        <button id="check-table-btn-3" class="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition">Verificar Tabla</button>
+                        <p id="table-feedback-3" class="mt-4 text-lg font-medium h-6"></p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="simulation" class="text-center mb-20 fade-in">
+            <h3 class="text-4xl font-bold mb-4">Práctica en el Simulador</h3>
+            <div class="card max-w-4xl mx-auto">
+                <h4 class="text-3xl font-bold text-center mb-6">Circuitos Integrados Lógicos (Chips)</h4>
+                <div class="md:flex gap-8 items-center">
+                    <div class="md:w-2/3 text-justify">
+                        <p>En la práctica, las compuertas lógicas no son componentes individuales, sino que vienen agrupadas dentro de **circuitos integrados** (ICs o "chips"). Un solo chip, como el "7408" que se muestra, contiene múltiples compuertas del mismo tipo (en este caso, cuatro compuertas AND).</p>
+                        <p class="mt-4">Para que funcionen, estos chips necesitan conectarse a una fuente de poder (VCC) y a tierra (GND). Cada compuerta tiene sus propios pines de entrada y un pin de salida.</p>
+                    </div>
+                    <div class="md:w-1/3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/7408_PCP.jpg/600px-7408_PCP.jpg" alt="Circuito Integrado 7408 con compuertas AND" class="rounded-lg shadow-md mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/300x200/cccccc/ffffff?text=IC+7408+AND';">
+                    </div>
+                </div>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto my-8 text-center">Ahora que entiendes la teoría, ve a <span class="font-bold">Tinkercad</span> y busca los circuitos integrados de compuertas lógicas (por ejemplo, el **7408 para AND**, **7432 para OR**). Intenta construir el circuito del robot de seguridad usando LEDs como sensores (encendido = 1, apagado = 0) y otro LED para la alarma.</p>
+                <a href="https://www.tinkercad.com/circuits" target="_blank" class="inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    Ir a Tinkercad Circuits
+                </a>
+            </div>
+        </section>
+
+        <section id="exit-ticket" class="text-center mb-12 fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Exit Ticket</h3>
+                <p class="text-lg mb-4">Crea la tabla de verdad para la expresión lógica: (A <strong>AND</strong> B) <strong>OR</strong> C. Sube una captura de pantalla de tu tabla.</p>
+            </div>
+        </section>
+
+        <section id="homework" class="text-center fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Tarea</h3>
+                <p class="text-lg mb-4">Piensa en un sistema simple en tu casa (como un microondas o una cafetera) y describe una decisión que toma usando lógica AND u OR.</p>
+                <textarea rows="4" class="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ejemplo: El microondas calienta SI se cierra la puerta Y se presiona el botón de inicio..."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        const canvas = document.getElementById('logic-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const movimientoInput = document.getElementById('logic-movimiento');
+        const puertaInput = document.getElementById('logic-puerta');
+        const ventanaInput = document.getElementById('logic-ventana');
+
+        const inactiveColor = '#9ca3af';
+        const activeColor = '#22c55e';
+
+        function drawGate(x, y, text, isActive) {
+            ctx.beginPath();
+            ctx.rect(x, y, 80, 50);
+            ctx.fillStyle = isActive ? activeColor : inactiveColor;
+            ctx.fill();
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 20px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x + 40, y + 25);
+        }
+
+        function drawWire(startX, startY, endX, endY, isActive) {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.strokeStyle = isActive ? activeColor : inactiveColor;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        function drawLabel(text, x, y){
+            ctx.fillStyle = '#1f2937';
+            ctx.font = '14px Inter';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+        
+        function drawAlarm(x, y, text, isActive) {
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, 2 * Math.PI);
+            ctx.fillStyle = isActive ? '#ef4444' : inactiveColor;
+            ctx.fill();
+            ctx.shadowColor = isActive ? '#ef4444' : 'transparent';
+            ctx.shadowBlur = 20;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, x, y);
+        }
+
+        function updateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const mov = movimientoInput.checked;
+            const puerta = puertaInput.checked;
+            const ventana = ventanaInput.checked;
+
+            const andResult = mov && puerta;
+            const orResult = andResult || ventana;
+            
+            drawLabel('Movimiento', 10, 50);
+            drawLabel('Puerta', 10, 100);
+            drawLabel('Ventana', 10, 225);
+
+            const andGateX = 200, andGateY = 60;
+            const orGateX = 400, orGateY = 137.5;
+            const alarmX = 550, alarmY = 162.5;
+
+            drawWire(100, 50, andGateX, andGateY + 12.5, mov);
+            drawWire(100, 100, andGateX, andGateY + 37.5, puerta);
+            drawGate(andGateX, andGateY, 'AND', andResult);
+            
+            drawWire(andGateX + 80, andGateY + 25, orGateX, orGateY + 12.5, andResult);
+            drawWire(100, 225, orGateX, orGateY + 37.5, ventana);
+            drawGate(orGateX, orGateY, 'OR', orResult);
+
+            drawWire(orGateX + 80, orGateY + 25, alarmX - 30, alarmY, orResult);
+            drawAlarm(alarmX, alarmY, orResult ? 'ON' : 'OFF', orResult);
+        }
+
+        movimientoInput.addEventListener('change', updateCanvas);
+        puertaInput.addEventListener('change', updateCanvas);
+        ventanaInput.addEventListener('change', updateCanvas);
+        
+        window.addEventListener('load', updateCanvas);
+
+        // Truth Table Activity 1
+        const checkTableBtn1 = document.getElementById('check-table-btn-1');
+        const tableFeedback1 = document.getElementById('table-feedback-1');
+        const tableInputs1 = document.querySelectorAll('#interactive-truth-table-1 input');
+        
+        const inputsByRow1 = Array.from({length: 8}, () => ({}));
+        tableInputs1.forEach(input => {
+            inputsByRow1[input.dataset.row]['col' + input.dataset.col] = input;
+        });
+
+        checkTableBtn1.addEventListener('click', () => {
+            let allCorrect = true;
+            inputsByRow1.forEach((row, rowIndex) => {
+                const a = parseInt(row.col0.closest('tr').children[0].textContent);
+                const b = parseInt(row.col0.closest('tr').children[1].textContent);
+                const c = parseInt(row.col0.closest('tr').children[2].textContent);
+
+                const userAndResult = parseInt(row.col0.value);
+                const correctAndResult = a && b;
+                row.col0.classList.remove('correct', 'incorrect');
+                if(row.col0.value !== '') {
+                    row.col0.classList.add(userAndResult === correctAndResult ? 'correct' : 'incorrect');
+                    if(userAndResult !== correctAndResult) allCorrect = false;
+                } else { allCorrect = false; }
+                
+                const userOrResult = parseInt(row.col1.value);
+                const correctOrResult = correctAndResult || c;
+                row.col1.classList.remove('correct', 'incorrect');
+                 if(row.col1.value !== '') {
+                    row.col1.classList.add(userOrResult === correctOrResult ? 'correct' : 'incorrect');
+                    if(userOrResult !== correctOrResult) allCorrect = false;
+                } else { allCorrect = false; }
+            });
+            
+            if (allCorrect) {
+                tableFeedback1.textContent = '¡Tabla Correcta! Excelente trabajo.';
+                tableFeedback1.style.color = '#22c55e';
+            } else {
+                tableFeedback1.textContent = 'Algunos valores son incorrectos. Inténtalo de nuevo.';
+                tableFeedback1.style.color = '#ef4444';
+            }
+        });
+
+        // Truth Table Activity 2
+        const checkTableBtn2 = document.getElementById('check-table-btn-2');
+        const tableFeedback2 = document.getElementById('table-feedback-2');
+        const tableInputs2 = document.querySelectorAll('#interactive-truth-table-2 input');
+
+        checkTableBtn2.addEventListener('click', () => {
+            let allCorrect = true;
+            const correctAnswers = [0, 1, 1, 0];
+            tableInputs2.forEach((input, index) => {
+                const isCorrect = parseInt(input.value) === correctAnswers[index];
+                input.classList.remove('correct', 'incorrect');
+                 if (input.value !== '') {
+                   input.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+                if (!isCorrect) {
+                    allCorrect = false;
+                }
+            });
+             if (allCorrect) {
+                tableFeedback2.textContent = '¡Tabla Correcta! Excelente trabajo.';
+                tableFeedback2.style.color = '#22c55e';
+            } else {
+                tableFeedback2.textContent = 'Algunos valores son incorrectos. Inténtalo de nuevo.';
+                tableFeedback2.style.color = '#ef4444';
+            }
+        });
+        
+        // Truth Table Activity 3
+        const checkTableBtn3 = document.getElementById('check-table-btn-3');
+        const tableFeedback3 = document.getElementById('table-feedback-3');
+        const tableInputs3 = document.querySelectorAll('#interactive-truth-table-3 input');
+
+        checkTableBtn3.addEventListener('click', () => {
+            let allCorrect = true;
+            const correctAnswers = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0];
+            tableInputs3.forEach((input, index) => {
+                 const isCorrect = parseInt(input.value) === correctAnswers[index];
+                input.classList.remove('correct', 'incorrect');
+                 if (input.value !== '') {
+                   input.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+                if (!isCorrect) {
+                    allCorrect = false;
+                }
+            });
+             if (allCorrect) {
+                tableFeedback3.textContent = '¡Tabla Correcta! Excelente trabajo.';
+                tableFeedback3.style.color = '#22c55e';
+            } else {
+                tableFeedback3.textContent = 'Algunos valores son incorrectos. Inténtalo de nuevo.';
+                tableFeedback3.style.color = '#ef4444';
+            }
+        });
+
+    </script>
+</body>
+</html>
+

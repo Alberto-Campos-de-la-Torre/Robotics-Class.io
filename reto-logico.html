@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 12 (Reto): Alumbrado Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .code-block .keyword { color: #93c5fd; } 
+        .code-block .type { color: #818cf8; } 
+        .code-block .function { color: #a78bfa; } 
+        .code-block .comment { color: #64748b; } 
+        .code-block .string { color: #f472b6; } 
+        .code-block .number { color: #34d399; }
+        .code-block .operator { color: #f472b6; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 12: Reto de Integración</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#challenge" class="text-gray-600 hover:text-blue-600">El Reto</a>
+                <a href="#components" class="text-gray-600 hover:text-blue-600">Componentes</a>
+                <a href="#logic-ops" class="text-gray-600 hover:text-blue-600">Op. Lógicos</a>
+                <a href="#pushbutton-guide" class="text-gray-600 hover:text-blue-600">Guía: Botón</a>
+                <a href="#logic-guide" class="text-gray-600 hover:text-blue-600">Guía: Lógica</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="challenge" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Reto de Integración: Alumbrado Inteligente</h3>
+            <div class="card max-w-4xl mx-auto">
+                <h4 class="text-2xl font-bold text-center mb-4">Tu Misión</h4>
+                <p class="text-lg text-gray-600 text-center mb-6">Vas a diseñar y programar un sistema de alumbrado inteligente que combine todo lo que hemos visto. El sistema debe funcionar con la siguiente lógica:</p>
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <ol class="list-decimal list-inside space-y-3">
+                        <li><strong>Sensor de Luz (LDR):</strong> El sistema solo debe "activarse" cuando esté oscuro (ej. lectura de LDR < 300). Si hay suficiente luz, el LED debe permanecer <strong>apagado</strong> sin importar lo que hagan el botón o el potenciómetro.</li>
+                        <li><strong>Interruptor Manual (Pushbutton):</strong> Una vez que el sistema está activo (está oscuro), el usuario puede encender o apagar la luz a voluntad presionando un botón. Debe ser un "toggle" (un toque enciende, otro toque apaga).</li>
+                        <li><strong>Control de Brillo (Potenciómetro):</strong> Cuando la luz está encendida (porque está oscuro Y el usuario la activó), el potenciómetro debe permitir ajustar el brillo.</li>
+                        <li><strong>Brillo Mínimo:</strong> El ajuste de brillo nunca debe apagar la luz por completo. El rango del potenciómetro debe controlar el brillo desde un nivel "bajo" (ej. 50) hasta el "máximo" (255).</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+        
+        <section id="components" class="mb-20 fade-in">
+             <h3 class="text-4xl font-bold text-center mb-12">Componentes Necesarios</h3>
+             <div class="card max-w-4xl mx-auto">
+                <ul class="list-disc list-inside grid grid-cols-2 gap-4 text-lg">
+                    <li>1x Arduino UNO</li>
+                    <li>1x Protoboard</li>
+                    <li>1x LED (el color que quieras)</li>
+                    <li>1x Resistencia de 220Ω (para el LED)</li>
+                    <li>1x Fotoresistencia (LDR)</li>
+                    <li>1x Resistencia de 10kΩ (para la LDR)</li>
+                    <li>1x Potenciómetro (10kΩ)</li>
+                    <li>1x Botón Pulsador (Pushbutton)</li>
+                    <li>Cables de conexión</li>
+                </ul>
+             </div>
+        </section>
+
+        <!-- NUEVA SECCIÓN AÑADIDA -->
+        <section id="logic-ops" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Lógica Compleja en C++: Operadores Lógicos</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-8">Para el reto, necesitarás que tu <code>if</code> revise múltiples condiciones a la vez. Para esto, usamos los operadores lógicos que vienen del Álgebra Booleana.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">AND (&&)</h4>
+                    <p class="mb-2">Se traduce como "Y". Ambas condiciones deben ser verdaderas para que todo el bloque sea verdadero.</p>
+                    <div class="code-block">
+<span class="comment">// Pseudocódigo:</span>
+<span class="comment">// SI (luz < 300 Y boton == PRESIONADO)</span>
+
+<span class="comment">// Código C++:</span>
+<span class="keyword">if</span> (valorLuz <span class="operator"><</span> <span class="number">300</span> <span class="operator">&&</span> estadoBoton <span class="operator">==</span> <span class="keyword">LOW</span>) {
+  <span class="comment">// ... hacer algo ...</span>
+}
+                    </div>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">OR (||)</h4>
+                    <p class="mb-2">Se traduce como "O". Solo una de las condiciones necesita ser verdadera para que el bloque sea verdadero.</p>
+                     <div class="code-block">
+<span class="comment">// Pseudocódigo:</span>
+<span class="comment">// SI (sensor1 > 500 O sensor2 > 500)</span>
+
+<span class="comment">// Código C++:</span>
+<span class="keyword">if</span> (sensor1 <span class="operator">></span> <span class="number">500</span> <span class="operator">||</span> sensor2 <span class="operator">></span> <span class="number">500</span>) {
+  <span class="comment">// ... hacer algo ...</span>
+}
+                    </div>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center">NOT (!)</h4>
+                    <p class="mb-2">Se traduce como "NO". Invierte el valor de una condición booleana (verdadero se vuelve falso, falso se vuelve verdadero).</p>
+                     <div class="code-block">
+<span class="comment">// Pseudocódigo:</span>
+<span class="comment">// SI (NO luzEncendida)</span>
+
+<span class="comment">// Código C++:</span>
+<span class="keyword">if</span> (<span class="operator">!</span>luzEncendida) { <span class="comment">// Equivale a (luzEncendida == false)</span>
+  <span class="comment">// ... hacer algo ...</span>
+}
+
+<span class="comment">// También existe "diferente de"</span>
+<span class="keyword">if</span> (valor <span class="operator">!=</span> <span class="number">10</span>) { <span class="comment">// Si valor NO es igual a 10</span>
+  <span class="comment">// ...</span>
+}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- FIN DE LA NUEVA SECCIÓN -->
+
+        <section id="pushbutton-guide" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Guía Rápida: Conexión del Botón</h3>
+            <div class="card max-w-4xl mx-auto">
+                <h4 class="text-2xl font-bold mb-4">Usando `digitalRead` y `INPUT_PULLUP`</h4>
+                <p class="mb-4">Para leer un botón, usaremos la resistencia "pull-up" interna del Arduino. Esto simplifica el circuito (no necesitamos una resistencia externa para el botón) pero invierte la lógica.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <p class="mb-2"><strong>Conexión:</strong></p>
+                        <ul class="list-disc list-inside text-lg mb-4">
+                            <li>Una pata del botón se conecta a un pin digital (ej. <strong>pin 2</strong>).</li>
+                            <li>La pata opuesta (diagonal) del botón se conecta a <strong>GND</strong>.</li>
+                        </ul>
+                        <p class="font-semibold">¡Eso es todo! No se necesita resistencia.</p>
+                    </div>
+                    <div>
+                        <p class="mb-2"><strong>Lógica Invertida:</strong></p>
+                        <ul class="list-disc list-inside text-lg mb-4">
+                            <li>Cuando el botón <strong>NO</strong> está presionado, <code>digitalRead(2)</code> devuelve <strong>HIGH (1)</strong>.</li>
+                            <li>Cuando el botón <strong>SÍ</strong> está presionado, <code>digitalRead(2)</code> devuelve <strong>LOW (0)</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block mt-4">
+<span class="type">const int</span> botonPin <span class="operator">=</span> <span class="number">2</span>;
+
+<span class="type">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Configura el pin 2 como entrada Y activa la resistencia pull-up interna</span>
+  <span class="function">pinMode</span>(botonPin, <span class="keyword">INPUT_PULLUP</span>);
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="type">int</span> estadoBoton <span class="operator">=</span> <span class="function">digitalRead</span>(botonPin); <span class="comment">// Será 1 (HIGH) o 0 (LOW)</span>
+  <span class="comment">// ... tu lógica va aquí ...</span>
+}
+                </div>
+             </div>
+        </section>
+
+        <section id="logic-guide" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Guía de Programación (Pseudocódigo)</h3>
+            <div class="card max-w-4xl mx-auto">
+                <p class="text-lg text-gray-600 text-center mb-6">Este reto es complejo. La parte más difícil es hacer que el botón "encienda" o "apague" un estado (toggle). Aquí tienes una guía de las variables y la lógica <strong>específicas para el botón</strong>. Deberás integrar el resto de la lógica (LDR, potenciómetro) alrededor de esto.</p>
+                
+                <div class="code-block">
+<span class="comment">// --- Variables Globales (fuera de setup y loop) ---</span>
+<span class="type">bool</span> luzEncendida <span class="operator">=</span> <span class="keyword">false</span>; <span class="comment">// Variable de estado para el toggle</span>
+<span class="type">bool</span> estadoBotonAnterior <span class="operator">=</span> <span class="keyword">HIGH</span>; <span class="comment">// Para detectar el "flanco de bajada" (recuerda, pull-up es HIGH)</span>
+
+<span class="comment">// ... Agrega aquí tus otras variables globales (pines, umbral, etc.) ...</span>
+
+<span class="type">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Configura el pin del botón (recuerda que es INPUT_PULLUP)</span>
+  <span class="function">pinMode</span>(botonPin, <span class="keyword">INPUT_PULLUP</span>);
+
+  <span class="comment">// ... Agrega aquí la configuración de tus otros pines (LED, Serial, etc.) ...</span>
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class_comment>// --- 1. Leer todos los sensores ---</span>
+  <span class="comment">// ... Agrega aquí la lectura de tu sensor LDR (valorLDR) ...</span>
+  <span class="type">bool</span> estadoBotonActual <span class="operator">=</span> <span class="function">digitalRead</span>(botonPin);
+
+  <span class="comment">// --- 2. Lógica Principal ---</span>
+  <span class="comment">// ... Agrega aquí tu IF principal para comprobar si está oscuro (valorLDR < umbral) ...</span>
+  <span class="comment">// DENTRO de ese IF, irá la lógica del botón:</span>
+
+    <span class="comment">// --- 3. Lógica de Toggle (Detectar *cuándo* se presiona) ---</span>
+    <span class="keyword">if</span> (estadoBotonActual <span class="operator">==</span> <span class="keyword">LOW</span> <span class="operator">&&</span> estadoBotonAnterior <span class="operator">==</span> <span class="keyword">HIGH</span>) {
+      <span class="comment">// ¡El botón acaba de ser presionado!</span>
+      luzEncendida <span class="operator">=</span> <span class="operator">!</span>luzEncendida; <span class="comment">// Invierte el estado (true a false, false a true)</span>
+      <span class="function">delay</span>(<span class="number">50</span>); <span class="comment">// Anti-rebote simple</span>
+    }
+    estadoBotonAnterior <span class="operator">=</span> estadoBotonActual; <span class="comment">// Actualiza el estado anterior para el próximo ciclo</span>
+
+    <span class="comment">// --- 4. Lógica de Salida (Controlar el LED) ---</span>
+    <span class="comment">// ... Agrega aquí tu IF/ELSE para comprobar (if luzEncendida == true) ...</span>
+    <span class="comment">// ... Si es true: lee el potenciómetro, mapea el valor, y usa analogWrite() ...</span>
+    <span class="comment">// ... Si es false: apaga el LED con analogWrite(ledPin, 0) ...</span>
+  
+  <span class="comment">// ... Y no olvides el ELSE de la lógica principal (¿qué pasa si es de día?) ...</span>
+}
+                </div>
+            </div>
+        </section>
+
+        <section id="simulation" class="text-center fade-in">
+             <h3 class="text-4xl font-bold mb-4">¡A Construir!</h3>
+             <div class="card max-w-4xl mx-auto">
+                <p class="text-lg text-gray-700 mb-6">Usa el pseudocódigo y las guías de conexión para armar tu sistema en Tinkercad. Depura tu código usando el Monitor Serie si es necesario. ¡Prueba todas las condiciones!</p>
+                <ul class="list-disc list-inside text-left max-w-md mx-auto mb-6">
+                    <li>¿Se queda apagado el LED cuando la LDR detecta luz?</li>
+                    <li>Cuando está oscuro, ¿puedes encender y apagar el LED con el botón?</li>
+                    <li>Cuando el LED está encendido, ¿puedes ajustar el brillo con el potenciómetro?</li>
+                    <li>¿El potenciómetro nunca apaga el LED por completo?</li>
+                </ul>
+                <a href="https://www.tinkercad.com/circuits" target="_blank" class="mt-6 inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    Abrir Tinkercad Circuits
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
+
+

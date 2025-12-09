@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS: Academic Portal</title>
+    <!-- Tailwind CSS for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Futuristic Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom Configurations */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-green: #0aff0a;
+            --neon-orange: #ff9e00;
+            --dark-bg: #05050a;
+            --glass: rgba(10, 20, 30, 0.7);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--neon-blue);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* CRT Scanline Effect */
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 243, 255, 0.1) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: fixed;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        /* Titles */
+        .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Card Style (Class Button) */
+        .class-card {
+            background: var(--glass);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+            clip-path: polygon(
+                10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%
+            );
+        }
+
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .class-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* TYPE VARIANTS */
+        .class-card.physics { /* Electronics/Physics - Purple */
+            border-color: rgba(188, 19, 254, 0.3);
+            color: #e0aaff;
+        }
+        .class-card.physics:hover {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 25px rgba(188, 19, 254, 0.3);
+            color: #fff;
+        }
+
+        .class-card.code { /* Programming - Green */
+            border-color: rgba(10, 255, 10, 0.3);
+            color: #ccffcc;
+        }
+        .class-card.code:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 25px rgba(10, 255, 10, 0.3);
+            color: #fff;
+        }
+
+        .class-card.exam { /* Exams - Orange/Warning */
+            border-color: rgba(255, 158, 0, 0.3);
+            color: #ffeebb;
+        }
+        .class-card.exam:hover {
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 25px rgba(255, 158, 0, 0.3);
+            color: #fff;
+        }
+
+        /* Corner Decorations */
+        .corner {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .class-card:hover .corner-tl { border-top-color: currentColor; border-left-color: currentColor; }
+        .class-card:hover .corner-br { border-bottom-color: currentColor; border-right-color: currentColor; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020204; }
+        ::-webkit-scrollbar-thumb { background: #00f3ff; border-radius: 4px; }
+
+        /* Loading Animation */
+        .loading-bar {
+            width: 0%;
+            height: 2px;
+            background: var(--neon-blue);
+            animation: load 1.5s ease-out forwards;
+        }
+        @keyframes load { to { width: 100%; } }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div class="scanline"></div>
+
+    <!-- Header / Top HUD -->
+    <header class="p-6 border-b border-cyan-900 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-network-wired text-4xl animate-pulse text-cyan-400"></i>
+                <div>
+                    <h1 class="orbitron text-3xl font-bold tracking-widest text-white">NEXUS<span class="text-cyan-400 text-sm align-top">V.2.2</span></h1>
+                    <p class="text-xs text-cyan-600 tracking-[0.3em]">LEARNING MANAGEMENT SYSTEM</p>
+                </div>
+            </div>
+            
+            <!-- Search Bar / Filter -->
+            <div class="relative group w-full md:w-96">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded opacity-30 group-hover:opacity-100 transition duration-500 blur"></div>
+                <div class="relative flex items-center bg-black rounded">
+                    <i class="fa-solid fa-search ml-3 text-gray-500"></i>
+                    <input type="text" id="searchInput" placeholder="SEARCH MODULE..." 
+                           class="w-full bg-transparent text-cyan-300 p-3 outline-none placeholder-gray-700 font-bold uppercase"
+                           onkeyup="filterClasses()">
+                </div>
+            </div>
+        </div>
+        <div class="loading-bar mt-6"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-6 md:p-12 max-w-7xl mx-auto w-full z-10">
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 text-center text-xs md:text-sm">
+            <div class="border border-cyan-900/50 p-2 bg-black/40 rounded">
+                <span class="text-gray-500 block">SYSTEM STATUS</span>
+                <span class="text-green-400 font-bold animate-pulse">OPTIMAL</span>
+            </div>
+            <div class="border border-cyan-900/50 p-2 bg-black/40 rounded">
+                <span class="text-gray-500 block">ACTIVE MODULES</span>
+                <span id="moduleCount" class="text-cyan-400 font-bold">0</span>
+            </div>
+            <div class="border border-cyan-900/50 p-2 bg-black/40 rounded">
+                <span class="text-gray-500 block">ACCESS LEVEL</span>
+                <span class="text-white font-bold">COMMANDER</span>
+            </div>
+            <div class="border border-cyan-900/50 p-2 bg-black/40 rounded">
+                <span class="text-gray-500 block">STARDATE</span>
+                <span id="stardate" class="text-purple-400 font-bold">--.--.--</span>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="flex items-center gap-4 mb-8">
+            <div class="h-px bg-cyan-700 flex-grow opacity-50"></div>
+            <h2 class="orbitron text-xl text-cyan-100 tracking-wider"><i class="fa-solid fa-layer-group mr-2 text-cyan-500"></i> MODULE DATABASE</h2>
+            <div class="h-px bg-cyan-700 flex-grow opacity-50"></div>
+        </div>
+
+        <!-- Class Grid (Buttons injected here) -->
+        <div id="classGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Content generated via JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-cyan-900/30 bg-black/80 p-6 text-center text-gray-600 text-xs mt-auto z-10">
+        <p>NEXUS INTERFACE © 2025 // ADVANCED ROBOTICS & PHYSICS</p>
+        <p class="mt-2 text-[10px] opacity-50">UNRESTRICTED ACCESS GRANTED</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // CLASS CONFIGURATION
+        // ==========================================
+        
+        const classesData = [
+            // --- BLOCK 1: FUNDAMENTALS & ELECTRONICS ---
+            {
+                id: "ROB-101",
+                title: "Robotics Fundamentals",
+                desc: "Class 1: Introduction to sensors, actuators, and the definition of a robot.",
+                icon: "fa-robot",
+                type: "robotics",
+                link: "Whats-a-robot.html", 
+                status: "AVAILABLE"
+            },
+            {
+                id: "EL-102",
+                title: "Electronics Basics",
+                desc: "Class 2: Circuits, voltage, current, resistance, and schematic symbols.",
+                icon: "fa-bolt",
+                type: "physics",
+                link: "Circuits.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "SIG-103",
+                title: "Digital vs Analog",
+                desc: "Class 3: Understanding signal types, measuring, and processing data.",
+                icon: "fa-wave-square",
+                type: "physics",
+                link: "Señales.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "LOG-201",
+                title: "Logic Gates I",
+                desc: "Class 4: The building blocks: AND, OR, NOT and truth tables.",
+                icon: "fa-microchip",
+                type: "robotics",
+                link: "logic.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "LOG-202",
+                title: "Advanced Logic",
+                desc: "Class 5: Derived gates (NAND, NOR, XOR) and complex simulation.",
+                icon: "fa-diagram-project",
+                type: "robotics",
+                link: "logic-2.html",
+                status: "AVAILABLE"
+            },
+            
+            // --- BLOCK 2: PROGRAMMING LOGIC ---
+            {
+                id: "PROG-101",
+                title: "Intro to Programming",
+                desc: "Class 7: Algorithms, Flowcharts, and Pseudocode logic.",
+                icon: "fa-code",
+                type: "code", 
+                link: "Pseudo-code.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "PROG-102",
+                title: "Logic to Code",
+                desc: "Class 8: Translating pseudocode to C++, Loops (For/While).",
+                icon: "fa-laptop-code",
+                type: "code", 
+                link: "Pseudo-real.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "PROG-103",
+                title: "Code Grammar",
+                desc: "Class 9: C++ Syntax, Variables, Data Types, and Control Flow.",
+                icon: "fa-terminal",
+                type: "code", 
+                link: "Code-gramar.html",
+                status: "AVAILABLE"
+            },
+
+            // --- BLOCK 3: SENSORS & ACTUATORS ---
+            {
+                id: "SENS-201",
+                title: "Reading Analog World",
+                desc: "Class 11: Analog Inputs, ADC conversion, and reading Potentiometers.",
+                icon: "fa-eye",
+                type: "physics", 
+                link: "digital-analog.html",
+                status: "AVAILABLE"
+            },
+             {
+                id: "ACT-202",
+                title: "Analog Outputs",
+                desc: "Class 12: PWM Signals, Mapping values, and controlling LED brightness.",
+                icon: "fa-lightbulb",
+                type: "physics", 
+                link: "Analog-write.html",
+                status: "AVAILABLE"
+            },
+             {
+                id: "COMM-301",
+                title: "Serial & Distance",
+                desc: "Class 13: Serial Communication (Tx/Rx) and Ultrasonic Sensors.",
+                icon: "fa-wifi",
+                type: "robotics", 
+                link: "Serial-com.html",
+                status: "AVAILABLE"
+            },
+
+            // --- BLOCK 4: CHALLENGES & EXAMS ---
+            {
+                id: "CH-301",
+                title: "Voting System",
+                desc: "Logic Challenge: Committee voting problem solver.",
+                icon: "fa-puzzle-piece",
+                type: "physics", 
+                link: "Challenge.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "CH-302",
+                title: "Smart Lighting",
+                desc: "Class 12 Challenge: Integrate LDR, Button, and Logic.",
+                icon: "fa-moon",
+                type: "robotics", 
+                link: "reto-logico.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "MID-EXAM",
+                title: "Midterm: Angular Pos",
+                desc: "Exam: Position Indicator System with LED bar graph.",
+                icon: "fa-file-signature",
+                type: "exam", 
+                link: "parcial-2.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "FNL-EXAM",
+                title: "Final: Ind. Control",
+                desc: "Final Exam: Industrial Control Console v2.0.",
+                icon: "fa-shield-halved",
+                type: "exam", 
+                link: "Examen-final.html",
+                status: "AVAILABLE"
+            },
+            {
+                id: "PROJ-401",
+                title: "Design Project",
+                desc: "Create Your Machine: Final logical system design.",
+                icon: "fa-drafting-compass",
+                type: "robotics",
+                link: "Quizzz.html",
+                status: "AVAILABLE"
+            }
+        ];
+
+        // ==========================================
+        // SYSTEM LOGIC
+        // ==========================================
+
+        const grid = document.getElementById('classGrid');
+        const countDisplay = document.getElementById('moduleCount');
+
+        function renderClasses(filterText = "") {
+            grid.innerHTML = ""; // Clear grid
+            let visibleCount = 0;
+
+            classesData.forEach(cls => {
+                // Filter
+                if (cls.title.toLowerCase().includes(filterText.toLowerCase()) || 
+                    cls.id.toLowerCase().includes(filterText.toLowerCase())) {
+                    
+                    visibleCount++;
+                    
+                    // Determine styling variables based on type
+                    let accentColor, borderColor, iconColor;
+
+                    switch(cls.type) {
+                        case 'physics': // Purple
+                            accentColor = 'text-purple-400';
+                            borderColor = 'border-purple-500';
+                            iconColor = 'text-purple-500';
+                            break;
+                        case 'code': // Green
+                            accentColor = 'text-green-400';
+                            borderColor = 'border-green-500';
+                            iconColor = 'text-green-500';
+                            break;
+                        case 'exam': // Orange
+                            accentColor = 'text-orange-400';
+                            borderColor = 'border-orange-500';
+                            iconColor = 'text-orange-500';
+                            break;
+                        case 'robotics': // Cyan (Default)
+                        default:
+                            accentColor = 'text-cyan-400';
+                            borderColor = 'border-cyan-500';
+                            iconColor = 'text-cyan-500';
+                            break;
+                    }
+
+                    // Create HTML element
+                    const card = document.createElement('a');
+                    card.href = cls.link;
+                    card.className = `class-card ${cls.type} block p-6 no-underline group relative overflow-hidden`;
+                    
+                    // Locked status (Though user requested none, code supports it)
+                    if (cls.status === "LOCKED") {
+                        card.style.opacity = "0.5";
+                        card.style.cursor = "not-allowed";
+                        card.href = "javascript:void(0)";
+                    }
+
+                    card.innerHTML = `
+                        <!-- Corner Decoration -->
+                        <div class="corner corner-tl top-0 left-0 ${accentColor}"></div>
+                        <div class="corner corner-br bottom-0 right-0 ${accentColor}"></div>
+                        
+                        <!-- Card Header -->
+                        <div class="flex justify-between items-start mb-4 relative z-10">
+                            <span class="font-bold text-xs bg-black/50 px-2 py-1 rounded border border-gray-700 ${accentColor}">
+                                ID: ${cls.id}
+                            </span>
+                            <i class="fa-solid ${cls.icon} text-3xl ${iconColor} group-hover:scale-110 transition-transform duration-300"></i>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="relative z-10">
+                            <h3 class="orbitron text-xl font-bold text-white mb-2 group-hover:${accentColor} transition-colors">
+                                ${cls.title}
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-6 h-12 overflow-hidden">
+                                ${cls.desc}
+                            </p>
+                        </div>
+
+                        <!-- Action Button / Status -->
+                        <div class="relative z-10 flex justify-between items-center border-t border-gray-800 pt-4 mt-2">
+                            <span class="text-[10px] tracking-widest ${cls.status === 'LOCKED' ? 'text-red-500' : 'text-green-500'}">
+                                <i class="fa-solid fa-circle text-[6px] align-middle mr-1"></i> ${cls.status}
+                            </span>
+                            <span class="text-xs font-bold ${accentColor} opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
+                                OPEN <i class="fa-solid fa-chevron-right ml-1"></i>
+                            </span>
+                        </div>
+                        
+                        <!-- Animated Background on Hover -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+                    `;
+
+                    grid.appendChild(card);
+                }
+            });
+
+            countDisplay.innerText = visibleCount;
+        }
+
+        function filterClasses() {
+            const input = document.getElementById('searchInput');
+            renderClasses(input.value);
+        }
+
+        function updateStardate() {
+            const now = new Date();
+            const stardate = (now.getFullYear() - 2000) + "." + (now.getMonth() + 1) + "." + now.getDate();
+            document.getElementById('stardate').innerText = stardate;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderClasses();
+            updateStardate();
+        });
+
+    </script>
+</body>
+</html>

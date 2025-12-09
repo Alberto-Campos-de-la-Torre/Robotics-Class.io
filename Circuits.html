@@ -1,0 +1,225 @@
+<!-- Chosen Palette: Calm Harmony -->
+<!-- Application Structure Plan: The SPA is redesigned as a multi-stage interactive lesson. It starts with an expanded core concepts section, then provides an embedded symbol reference. A new guided example section has been added to demonstrate component identification on a simple circuit. This precedes the main descriptive activity where students analyze two different schematics with larger images and text areas. A new password-protected answer reveal section has been added for self-assessment. The structure culminates in a practical application step, directing students to an advanced external simulator (Tinkercad). This scaffolding (concept -> reference -> example -> activity -> self-assessment -> application) enhances the learning flow. -->
+<!-- Visualization & Content Choices: 1. Core Concepts -> Goal: Inform -> Method: A grid of cards with technical descriptions. -> Interaction: Hover effects. -> Justification: Provides clear definitions. 2. Component Symbols -> Goal: Reference -> Method: An embedded iframe. -> Interaction: Users can browse the site. -> Justification: Provides a reliable symbol dictionary. 3. Guided Example -> Goal: Demonstrate -> Method: A simple schematic followed by an explicit description of its components. -> Interaction: None. -> Justification: Models the thinking process required for the main activity. 4. Identification Activity -> Goal: Apply/Describe -> Method: Two complex schematics with larger images and text areas. -> Interaction: User text input. -> Justification: Allows students to practice analysis on varied circuits with better guidance. 5. Answer Reveal -> Goal: Verify -> Method: A password input that reveals a hidden div with correct answers. -> Interaction: Password entry. -> Justification: Allows students to check their work after attempting the activity. 6. Simulation Link -> Goal: Extend Learning -> Method: A call-to-action button to Tinkercad. -> Interaction: External link. -> Justification: Guides students to a comprehensive tool for advanced practice. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 2: Fundamentos de Electrónica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        #symbol-viewer {
+            width: 100%;
+            height: 60vh;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 2: Fundamentos de Circuitos Electrónicos</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#concepts" class="text-gray-600 hover:text-blue-600">Conceptos</a>
+                <a href="#components" class="text-gray-600 hover:text-blue-600">Símbolos</a>
+                <a href="#activity" class="text-gray-600 hover:text-blue-600">Actividad</a>
+                <a href="#simulation" class="text-gray-600 hover:text-blue-600">Simulación</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="warmup" class="text-center mb-20 fade-in">
+            <h2 class="text-5xl font-extrabold mb-4 text-blue-600">Anatomía de un Circuito</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">Un circuito electrónico es un sistema interconectado de componentes que transportan corriente eléctrica. Lo que observan es una Placa de Circuito Impreso (PCB), el esqueleto que soporta y conecta eléctricamente los componentes de casi todos los dispositivos electrónicos modernos.</p>
+            <img src="https://th.bing.com/th/id/R.740a3c3352445a6502a01c152c401216?rik=tS3IrIIJSOm2yw&pid=ImgRaw&r=0" alt="Placa de circuito impreso" class="rounded-lg shadow-lg mx-auto max-h-96 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x400/34495e/ffffff?text=Imagen+de+PCB';">
+        </section>
+
+        <section id="concepts" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Conceptos Fundamentales</h3>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="card text-center">
+                    <h4 class="text-2xl font-semibold mb-2">Voltaje (V)</h4>
+                    <p class="text-gray-600">El Voltaje, o diferencia de potencial eléctrico, es la energía potencial por unidad de carga. Representa la "presión" que impulsa a los electrones a través de un conductor. Se mide en **Voltios (V)**.</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-2xl font-semibold mb-2">Corriente (I)</h4>
+                    <p class="text-gray-600">La Corriente es la tasa de flujo de la carga eléctrica. Es la cantidad de electrones que pasan por un punto específico de un circuito en un segundo. Se mide en **Amperios (A)**.</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-2xl font-semibold mb-2">Resistencia (R)</h4>
+                    <p class="text-gray-600">La Resistencia es la oposición al paso de la corriente. Limita el flujo de electrones y se utiliza para controlar los niveles de voltaje y corriente en un circuito. Se mide en **Ohmios (Ω)**.</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-2xl font-semibold mb-2">Capacitancia (C)</h4>
+                    <p class="text-gray-600">Es la capacidad de un componente para almacenar energía en un campo eléctrico. Un capacitor actúa como una pequeña batería recargable de acción muy rápida. Se mide en **Faradios (F)**.</p>
+                </div>
+                 <div class="card text-center md:col-span-2">
+                    <h4 class="text-2xl font-semibold mb-2">Potencia Eléctrica (P)</h4>
+                    <p class="text-gray-600">Es la tasa a la que la energía eléctrica es transferida por un circuito. Es el producto del voltaje y la corriente (P = V * I) y nos indica cuánta energía consume un componente por segundo. Se mide en **Vatios (W)**.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="components" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Referencia de Símbolos Esquemáticos</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8 text-center">Para diseñar y entender circuitos, usamos un lenguaje universal de símbolos. Explora el siguiente catálogo interactivo para familiarizarte con los componentes más comunes.</p>
+            <div class="card max-w-5xl mx-auto">
+                <iframe id="symbol-viewer" src="https://www.electronic-symbols.com/" title="Visor de Símbolos Electrónicos"></iframe>
+            </div>
+        </section>
+        
+        <section id="activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividad: Identifica los Componentes</h3>
+            
+            <div class="card max-w-4xl mx-auto mb-12">
+                <h4 class="text-3xl font-bold text-center mb-6">Ejemplo Guiado</h4>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-6 text-center">Antes de analizar un circuito complejo, empecemos con uno simple. Observa el siguiente diagrama:</p>
+                <img src="https://tse4.mm.bing.net/th/id/OIP.GmuiVJeKzL_yOxReza-jjQAAAA?r=0&w=320&h=190&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Esquema de un circuito LED simple" class="w-full max-w-md h-auto rounded-lg bg-white p-4 mb-6 mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/600x300/cccccc/ffffff?text=Esquema+Simple';">
+                <p class="text-lg text-gray-700 bg-gray-100 p-4 rounded-lg">En este diagrama podemos identificar: una <strong>Fuente de Poder</strong> (la batería), una <strong>Resistencia</strong> (para proteger el LED), y un <strong>LED</strong>. Las líneas representan los cables que los conectan en serie.</p>
+            </div>
+
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8 text-center">Ahora es tu turno. Observa los siguientes esquemas. En cada caja de texto, enumera y describe cada componente que observes en el diagrama correspondiente.</p>
+            <div class="grid md:grid-cols-1 gap-8">
+                <div class="card flex flex-col">
+                    <h4 class="text-2xl font-bold text-center mb-4">Diagrama 1: Oscilador 555</h4>
+                    <div class="flex-grow flex items-center justify-center mb-4">
+                        <img src="https://www.incb.com.mx/images/sampledata/cir/cir3132s_0001.jpg" alt="Esquema de un oscilador 555 para identificar componentes" class="max-w-full max-h-[500px] h-auto object-contain rounded-lg bg-white p-2" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Esquema+555';">
+                    </div>
+                    <textarea rows="10" class="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-auto" placeholder="Enumera y describe cada componente que identifiques aquí..."></textarea>
+                </div>
+                <div class="card flex flex-col">
+                    <h4 class="text-2xl font-bold text-center mb-4">Diagrama 2: Fuente de Poder</h4>
+                     <div class="flex-grow flex items-center justify-center mb-4">
+                        <img src="https://i.pinimg.com/originals/36/8d/e3/368de3cab37ef940a5dd58d6dba2a1f4.png" alt="Esquema de una fuente de poder simple" class="max-w-full max-h-[500px] h-auto object-contain rounded-lg bg-white p-2" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Esquema+Fuente';">
+                    </div>
+                    <textarea rows="10" class="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-auto" placeholder="Enumera y describe cada componente que identifiques aquí..."></textarea>
+                </div>
+            </div>
+
+            <div class="card max-w-2xl mx-auto mt-12">
+                <h4 class="text-2xl font-bold text-center mb-4">Verificar Respuestas</h4>
+                <p class="text-center text-gray-600 mb-4">Ingresa la contraseña proporcionada para ver las respuestas correctas.</p>
+                <div class="flex items-center gap-4 max-w-sm mx-auto">
+                    <input type="password" id="password-input" placeholder="Contraseña..." class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="show-answers-btn" class="bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition">Mostrar</button>
+                </div>
+                <p id="password-feedback" class="text-center text-red-500 h-6 mt-2"></p>
+                <div id="correct-answers" class="hidden mt-6 space-y-4">
+                    <div>
+                        <h5 class="font-bold text-lg">Diagrama 1: Oscilador 555</h5>
+                        <ul class="list-disc list-inside text-gray-700">
+                            <li><strong>Fuente de poder (VCC):</strong> Alimenta el circuito.</li>
+                            <li><strong>Resistencias (R1, R2, R3):</strong> Limitan la corriente y controlan tiempos.</li>
+                            <li><strong>Capacitores (C1, C2):</strong> Almacenan energía y definen la frecuencia de oscilación.</li>
+                            <li><strong>LED (D1):</strong> Indicador visual que parpadea.</li>
+                            <li><strong>Circuito Integrado 555:</strong> El cerebro del oscilador.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-lg">Diagrama 2: Fuente de Poder</h5>
+                         <ul class="list-disc list-inside text-gray-700">
+                            <li><strong>BAT1:</strong> Fuente de poder (Batería de 1.5V).</li>
+                            <li><strong>Transformador/Inductor:</strong> Componente con dos bobinas.</li>
+                            <li><strong>Q1, Q2:</strong> Transistores (BC548, C2655).</li>
+                            <li><strong>R1, RV1:</strong> Resistencias (una fija de 330Ω y un potenciómetro de 3kΩ).</li>
+                            <li><strong>D1:</strong> Diodo.</li>
+                            <li><strong>C1:</strong> Capacitor polarizado (electrolítico) de 47uF.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulation" class="text-center mb-20 fade-in">
+            <h3 class="text-4xl font-bold mb-4">Práctica en el Simulador</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8">Ahora que conoces los fundamentos, es hora de practicar. Usaremos <span class="font-bold">Autodesk Tinkercad Circuits</span>, una herramienta en línea gratuita que te permite construir y simular circuitos complejos de forma segura. Es el siguiente paso para convertir la teoría en práctica.</p>
+            <div class="card max-w-2xl mx-auto">
+                 <a href="https://www.tinkercad.com/circuits" target="_blank" class="inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    Ir a Tinkercad Circuits
+                </a>
+                <p class="text-sm text-gray-500 mt-4">Se abrirá en una nueva pestaña. Se recomienda crear una cuenta gratuita para guardar su progreso.</p>
+            </div>
+        </section>
+
+        <section id="exit-ticket" class="text-center mb-20 fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Exit Ticket</h3>
+                <p class="text-lg">Usando Tinkercad, busca un circuito básico de "oscilador 555" o "LED parpadeante con 555". Constrúyelo, simúlalo y prepárate para explicar su funcionamiento en la siguiente clase.</p>
+            </div>
+        </section>
+
+        <section id="homework" class="text-center fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Tarea</h3>
+                <p class="text-lg mb-4">¿Cuál es la función principal del circuito integrado 555 en un circuito de oscilador astable como el que viste en la actividad?</p>
+                <textarea rows="4" class="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Escribe tu respuesta aquí..."></textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        const passwordInput = document.getElementById('password-input');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const correctAnswersDiv = document.getElementById('correct-answers');
+        const passwordFeedback = document.getElementById('password-feedback');
+
+        showAnswersBtn.addEventListener('click', () => {
+            if (passwordInput.value === 'Twin') {
+                correctAnswersDiv.classList.remove('hidden');
+                passwordFeedback.textContent = '';
+            } else {
+                passwordFeedback.textContent = 'Contraseña incorrecta.';
+                correctAnswersDiv.classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>
+

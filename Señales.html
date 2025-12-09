@@ -1,0 +1,357 @@
+<!-- Chosen Palette: Calm Harmony -->
+<!-- Application Structure Plan: The SPA is a multi-stage interactive lesson. It starts with an interactive simulation (switch vs. dimmer), then provides deeper technical definitions for Digital and Analog signals, now reorganized for better readability. A new section on signal measurement with real-world tools has been added, focusing on sensors. The learning is reinforced with a classification quiz. The lesson culminates with a practical step in Tinkercad, now with more specific instructions and visual aids. This structure (simulation -> concept -> measurement -> application -> practice) provides a comprehensive learning path. -->
+<!-- Visualization & Content Choices: 1. Warm-Up Simulation -> Goal: Demonstrate -> Method: Interactive lightbulbs. -> Interaction: User clicks and drags. -> Justification: Provides a tangible demonstration. 2. Core Concepts -> Goal: Inform/Contrast -> Method: Reorganized cards with expanded technical text and a canvas for the digital wave. -> Interaction: Hover effects. -> Justification: Deeper text provides more substance. 3. Signal Measurement -> Goal: Explain -> Method: A new section with cards explaining how digital and analog signals are captured via sensors. -> Interaction: None. -> Justification: Bridges the gap between theoretical concepts and practical application. 4. Identification Quiz -> Goal: Apply -> Method: An interactive quiz classifying scenarios. -> Interaction: Button clicks with instant feedback. -> Justification: Quick, gamified knowledge check. 5. Tinkercad Link -> Goal: Guide -> Method: A simple call-to-action to the simulator with new visual examples. -> Interaction: External link. -> Justification: Provides a clear path for the practical simulation activity. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 3: Señales Digitales y Analógicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .signal-graph {
+            height: 100px;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            position: relative;
+            margin-top: 1rem;
+            background-color: #f9fafb;
+        }
+        .analog-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .analog-wave svg {
+            position: absolute;
+            bottom: 0;
+        }
+        .light-bulb {
+            width: 80px;
+            height: 80px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            margin: 1rem auto;
+            transition: all 0.3s ease;
+            border: 4px solid #d1d5db;
+        }
+        .light-bulb.on {
+            background-color: #facc15;
+            border-color: #fde047;
+            box-shadow: 0 0 20px 5px #facc15;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 3: Señales Digitales vs. Analógicas</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#concepts" class="text-gray-600 hover:text-blue-600">Conceptos</a>
+                <a href="#measurement" class="text-gray-600 hover:text-blue-600">Medición</a>
+                <a href="#activity" class="text-gray-600 hover:text-blue-600">Actividad</a>
+                <a href="#simulation" class="text-gray-600 hover:text-blue-600">Simulación</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="warmup" class="text-center mb-20 fade-in">
+            <h2 class="text-5xl font-extrabold mb-4 text-blue-600">Comunicación en el Mundo Real</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">Un interruptor solo tiene dos estados: encendido o apagado. Un atenuador (dimmer) permite infinitos niveles de brillo. Ambos controlan la luz, pero usan "lenguajes" diferentes. ¡Pruébalos tú mismo!</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-blue-600">Interruptor (Digital)</h3>
+                    <div id="bulb-digital" class="light-bulb"></div>
+                    <button id="switch-btn" class="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Encender/Apagar</button>
+                </div>
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-red-500">Atenuador (Analógico)</h3>
+                    <div id="bulb-analog" class="light-bulb"></div>
+                    <input id="dimmer-slider" type="range" min="0" max="100" value="0" class="w-full">
+                </div>
+            </div>
+        </section>
+
+        <section id="concepts" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Profundizando en Señales Digitales y Analógicas</h3>
+            <div class="space-y-8">
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center text-blue-600">Señal Digital</h4>
+                    <div class="md:flex md:gap-8 items-center">
+                        <div class="md:w-2/3 text-justify">
+                            <p class="mb-4">Una señal digital es **discreta** y **cuantificada**. Esto significa que solo puede existir en un número finito de estados definidos, típicamente dos: ALTO (1) y BAJO (0). La información se representa como una secuencia de estos valores. Su gran ventaja es la **inmunidad al ruido**: una pequeña fluctuación en el voltaje no cambia un 0 por un 1, lo que hace la transmisión de datos muy fiable. Es el lenguaje de las computadoras.</p>
+                             <p class="font-semibold">Ejemplos: <span class="font-normal">Datos en un CD o USB, comunicación por internet, un interruptor.</span></p>
+                        </div>
+                        <div class="md:w-1/3">
+                            <div class="signal-graph">
+                                <canvas id="digital-wave-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center text-red-500">Señal Analógica</h4>
+                    <div class="md:flex md:gap-8 items-center">
+                        <div class="md:w-2/3 text-justify">
+                            <p class="mb-4">Una señal analógica es **continua**, tanto en tiempo como en amplitud. Puede tomar cualquier valor dentro de un rango determinado, representando la información de una forma fluida que es análoga al fenómeno físico que mide. El mundo natural es inherentemente analógico. Su principal desventaja es su **susceptibilidad al ruido**: cualquier interferencia se suma a la señal, degradando su calidad.</p>
+                            <p class="font-semibold">Ejemplos: <span class="font-normal">Ondas de sonido, la luz del sol, la lectura de un termómetro de mercurio.</span></p>
+                        </div>
+                         <div class="md:w-1/3">
+                             <div class="signal-graph">
+                                <div class="analog-wave">
+                                    <svg viewBox="0 0 500 100" preserveAspectRatio="none" style="width: 100%; height: 100%;">
+                                        <path d="M 0 50 Q 125 0, 250 50 T 500 50" stroke="#ef4444" fill="transparent" stroke-width="4"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="measurement" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">¿Cómo Capturamos y Medimos las Señales?</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8 text-center">Para que un robot o computadora pueda "ver" el mundo, primero debe capturar información a través de sensores y luego convertirla a un formato que pueda procesar.</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                 <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center text-blue-600">Capturando Señales Digitales</h4>
+                    <p class="mb-4 text-justify">
+                        Las señales digitales son las más sencillas de capturar porque solo tienen dos estados.
+                        <br><br>
+                        <strong>Sensores:</strong> Dispositivos como un **botón pulsador** o un **interruptor de final de carrera** son sensores digitales. Físicamente, están abiertos o cerrados.
+                        <br><br>
+                        <strong>Medición:</strong> Un microcontrolador lee estos estados directamente en sus pines digitales como un <strong>0 (BAJO)</strong> o un <strong>1 (ALTO)</strong>. No se necesita una conversión compleja.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4 class="text-2xl font-bold mb-4 text-center text-red-500">Capturando y Procesando Señales Analógicas</h4>
+                    <p class="mb-4 text-justify">
+                        El mundo real es analógico, por lo que la mayoría de los sensores capturan información de esta forma.
+                        <br><br>
+                        <strong>Sensores:</strong> Una **fotoresistencia** (que mide la luz) o un **potenciómetro** (que mide un ángulo de giro) son sensores analógicos. Su resistencia eléctrica cambia de forma continua.
+                        <br><br>
+                        <strong>Medición (ADC):</strong> Para que un microcontrolador entienda esta señal, utiliza un **Convertidor Analógico-Digital (ADC)**. Este "mide" el voltaje continuo y lo convierte en un número digital. La precisión de esta conversión depende de la **resolución** del ADC (ej. 10 bits = 1024 niveles).
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividad: ¿Digital o Analógico?</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8 text-center">Clasifica cada uno de los siguientes ejemplos. Haz clic en el botón correcto para cada caso y ve cuántos aciertas.</p>
+            <div id="quiz-items" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            </div>
+            <div class="text-center mt-8">
+                <p id="quiz-score" class="text-2xl font-bold h-8"></p>
+                <button id="reset-quiz" class="hidden mt-4 bg-gray-200 text-gray-800 px-5 py-2 rounded-lg font-semibold hover:bg-gray-300 transition">Intentar de Nuevo</button>
+            </div>
+        </section>
+
+        <section id="simulation" class="text-center mb-20 fade-in">
+            <h3 class="text-4xl font-bold mb-4">Práctica en el Simulador</h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8">Usa <span class="font-bold">Autodesk Tinkercad Circuits</span> para explorar sensores. Busca una **fotoresistencia**, un **potenciómetro** y un **botón pulsador** y conéctalos a una fuente de poder. Intenta medir sus valores con el multímetro. <br><br><strong>¿Cómo conectar el multímetro?</strong> Para medir el <strong>voltaje</strong> a través de un componente, conecta las puntas del multímetro en <strong>paralelo</strong>. Para medir <strong>resistencia</strong>, el componente debe estar <strong>desconectado</strong> del circuito.</p>
+            
+            <div class="card max-w-4xl mx-auto mb-8">
+                <h4 class="text-2xl font-bold text-center mb-4">Ejemplos de Circuitos en Tinkercad</h4>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="text-center">
+                        <p class="font-semibold mb-2">Circuito de Botón Pulsador (Digital)</p>
+                        <img src="https://libros.catedu.es/uploads/images/gallery/2023-01/circuitos-pulsador.png" alt="Ejemplo de circuito de botón en Tinkercad" class="rounded-lg shadow-md mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Circuito+Digital';">
+                    </div>
+                    <div class="text-center">
+                         <p class="font-semibold mb-2">Circuito de Potenciómetro (Analógico)</p>
+                        <img src="https://csg-prd.tinkercad.com/things/5J8B5AJRoch/t725.png?rev=1601668091040000000&s=&v=1&type=circuits" alt="Ejemplo de circuito de potenciómetro en Tinkercad" class="rounded-lg shadow-md mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Circuito+Analógico';">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card max-w-2xl mx-auto">
+                 <a href="https://www.tinkercad.com/circuits" target="_blank" class="inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                    Ir a Tinkercad Circuits
+                </a>
+                <p class="text-sm text-gray-500 mt-4">Se abrirá en una nueva pestaña. Se recomienda crear una cuenta gratuita para guardar su progreso.</p>
+            </div>
+        </section>
+
+        <section id="exit-ticket" class="text-center mb-12 fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Exit Ticket</h3>
+                <p class="text-lg mb-4">En tus propias palabras, ¿cuál es la diferencia clave entre una señal digital y una analógica?</p>
+                <textarea rows="4" class="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Escribe tu respuesta aquí..."></textarea>
+            </div>
+        </section>
+
+        <section id="homework" class="text-center fade-in">
+            <div class="card max-w-3xl mx-auto bg-gray-800 text-white">
+                <h3 class="text-3xl font-bold mb-4 text-blue-400">Tarea</h3>
+                <p class="text-lg mb-4">Investiga y nombra tres sensores que un robot podría usar. Para cada uno, especifica si su salida principal es una señal analógica o digital.</p>
+                <textarea rows="4" class="w-full p-3 bg-gray-700 text-white border-2 border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Escribe tu respuesta aquí..."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Warmup Simulation
+        const switchBtn = document.getElementById('switch-btn');
+        const bulbDigital = document.getElementById('bulb-digital');
+        const dimmerSlider = document.getElementById('dimmer-slider');
+        const bulbAnalog = document.getElementById('bulb-analog');
+
+        switchBtn.addEventListener('click', () => {
+            bulbDigital.classList.toggle('on');
+        });
+
+        dimmerSlider.addEventListener('input', (e) => {
+            const brightness = e.target.value / 100;
+            bulbAnalog.style.opacity = brightness > 0.1 ? brightness : 0.1;
+            if (brightness > 0) {
+                bulbAnalog.classList.add('on');
+                bulbAnalog.style.boxShadow = `0 0 ${brightness * 20}px 5px #facc15`;
+            } else {
+                bulbAnalog.classList.remove('on');
+            }
+        });
+
+        // Digital Wave Canvas
+        const canvas = document.getElementById('digital-wave-canvas');
+        const ctx = canvas.getContext('2d');
+        function drawDigitalWave() {
+            const w = canvas.width;
+            const h = canvas.height;
+            const step = w / 5;
+            const high = h * 0.2;
+            const low = h * 0.8;
+            
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 4;
+            
+            ctx.moveTo(0, low);
+            ctx.lineTo(step, low);
+            ctx.lineTo(step, high);
+            ctx.lineTo(step * 2, high);
+            ctx.lineTo(step * 2, low);
+            ctx.lineTo(step * 3, low);
+            ctx.lineTo(step * 3, high);
+            ctx.lineTo(step * 4, high);
+            ctx.lineTo(step * 4, low);
+            ctx.lineTo(step * 5, low);
+            ctx.stroke();
+        }
+        function resizeCanvas() {
+            const parent = canvas.parentElement;
+            canvas.width = parent.clientWidth;
+            canvas.height = parent.clientHeight;
+            drawDigitalWave();
+        }
+        window.addEventListener('resize', resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+
+        // Quiz 1
+        const quizData = [
+            { question: 'El volumen de un estéreo', answer: 'analogico' },
+            { question: 'El estado de un foco (encendido/apagado)', answer: 'digital' },
+            { question: 'Un mensaje de texto', answer: 'digital' },
+            { question: 'La temperatura medida por un termómetro de mercurio', answer: 'analogico' },
+            { question: 'La velocidad de un coche mostrada en un velocímetro de aguja', answer: 'analogico' },
+            { question: 'El clic de un mouse', answer: 'digital' }
+        ];
+        const quizContainer = document.getElementById('quiz-items');
+        const scoreElement = document.getElementById('quiz-score');
+        const resetButton = document.getElementById('reset-quiz');
+        let score = 0;
+        let answered = 0;
+        function renderQuiz() {
+            quizContainer.innerHTML = '';
+            score = 0;
+            answered = 0;
+            scoreElement.textContent = '';
+            resetButton.classList.add('hidden');
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card border-2 border-transparent';
+                card.innerHTML = `
+                    <p class="text-lg font-semibold text-center mb-4">${item.question}</p>
+                    <div class="flex justify-around">
+                        <button data-index="${index}" data-type="digital" class="bg-blue-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">Digital</button>
+                        <button data-index="${index}" data-type="analogico" class="bg-red-500 text-white px-5 py-2 rounded-lg font-semibold hover:bg-red-600 transition">Analógico</button>
+                    </div>
+                `;
+                quizContainer.appendChild(card);
+            });
+        }
+        quizContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const index = e.target.dataset.index;
+                const type = e.target.dataset.type;
+                const card = e.target.closest('.card');
+                if (card.dataset.answered) return;
+                card.dataset.answered = true;
+                answered++;
+                const correct = type === quizData[index].answer;
+                if (correct) {
+                    score++;
+                    card.classList.add('border-green-400');
+                } else {
+                    card.classList.add('border-red-400');
+                }
+                if (answered === quizData.length) {
+                    scoreElement.textContent = `Puntuación: ${score} de ${quizData.length}`;
+                    resetButton.classList.remove('hidden');
+                }
+            }
+        });
+        resetButton.addEventListener('click', renderQuiz);
+        renderQuiz();
+
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Final: Consola de Control Industrial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        .card { background-color: white; border-radius: 1rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .code-block { background-color: #1e293b; color: #e2e8f0; font-family: monospace; padding: 1rem; border-radius: 0.5rem; white-space: pre-wrap; font-size: 0.9rem; }
+        .keyword { color: #93c5fd; } 
+        .type { color: #818cf8; } 
+        .function { color: #a78bfa; } 
+        .string { color: #f472b6; } 
+        .number { color: #34d399; }
+        .comment { color: #64748b; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4">
+            <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1: Examen Final</h1>
+            <p class="text-sm text-gray-600">Proyecto Integrador: Sistema de Control Industrial v2.0</p>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section class="mb-20 text-center">
+            <h2 class="text-5xl font-extrabold mb-6 text-blue-800">El Reto Final: Nivel Ingeniero</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                La fábrica necesita una actualización. Debes crear una consola que visualice la potencia en una <strong>barra de progreso física</strong> y que distinga inteligentemente entre <strong>comandos de texto</strong> y <strong>ajustes numéricos</strong> recibidos por el puerto serial.
+            </p>
+        </section>
+
+        <section class="mb-12">
+            <h3 class="text-3xl font-bold mb-8">1. Hardware (El Tablero de Control)</h3>
+            <div class="card border-l-4 border-green-500">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">Entradas</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Potenciómetro (A0):</strong> Control de velocidad Manual.</li>
+                            <li><strong>Botón Pulsador (Pin 2):</strong> Parada de Emergencia Física.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">Salidas (Indicadores)</h4>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>Barra de Potencia (4 LEDs):</strong>
+                                <ul class="ml-6 list-circle text-sm text-gray-600">
+                                    <li>Pin 3: LED Verde (Nivel 1)</li>
+                                    <li>Pin 4: LED Verde (Nivel 2)</li>
+                                    <li>Pin 5: LED Amarillo (Nivel 3)</li>
+                                    <li>Pin 6: LED Naranja (Nivel 4)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Alarma (1 LED):</strong>
+                                <ul class="ml-6 list-circle text-sm text-gray-600">
+                                    <li>Pin 8: LED Rojo (Emergencia)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h3 class="text-3xl font-bold mb-8">2. Lógica del Sistema</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card border-l-4 border-blue-500">
+                    <h4 class="text-xl font-bold mb-4">Visualización de Potencia</h4>
+                    <p class="mb-4">Los LEDs deben encenderse acumulativamente según la potencia (0-100%):</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>0-24%:</strong> Todos apagados.</li>
+                        <li><strong>25-49%:</strong> Solo LED 1 encendido.</li>
+                        <li><strong>50-74%:</strong> LEDs 1 y 2 encendidos.</li>
+                        <li><strong>75-89%:</strong> LEDs 1, 2 y 3 encendidos.</li>
+                        <li><strong>90-100%:</strong> Todos encendidos (1, 2, 3 y 4).</li>
+                    </ul>
+                </div>
+                <div class="card border-l-4 border-red-500">
+                    <h4 class="text-xl font-bold mb-4">Seguridad Crítica</h4>
+                    <p class="mb-4">Si se presiona el botón de <strong>Parada de Emergencia</strong> O se recibe el comando "ALTO"/"A":</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li>El sistema entra en estado de <strong>BLOQUEO</strong>.</li>
+                        <li>La barra de potencia se apaga por completo.</li>
+                        <li>El LED Rojo de Alarma parpadea.</li>
+                        <li>El sistema <strong>NO</strong> puede volver a funcionar hasta recibir el comando de desbloqueo ("R").</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="card border-l-4 border-purple-500 bg-gray-50">
+                <h4 class="text-xl font-bold mb-4 text-purple-800">3. La Consola de Comandos (Puerto Serial)</h4>
+                <p class="mb-4">El sistema debe ser capaz de distinguir si el usuario escribió un número o una letra.</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-sm">
+                        <thead class="bg-purple-200 text-purple-900">
+                            <tr>
+                                <th class="p-3">Entrada</th>
+                                <th class="p-3">Acción Esperada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-purple-100">
+                            <tr>
+                                <td class="p-3 font-mono font-bold">0 - 100</td>
+                                <td class="p-3"><strong>Control Remoto:</strong> Si escribes un número (ej. "50"), el sistema fija la potencia a ese valor y deja de hacer caso al potenciómetro.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono font-bold">A, a, ALTO</td>
+                                <td class="p-3"><strong>Parada de Emergencia:</strong> Activa el bloqueo inmediato y la alarma.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono font-bold">R, r</td>
+                                <td class="p-3"><strong>Reset:</strong> Saca al sistema del estado de BLOQUEO y devuelve el control al potenciómetro (Modo Manual).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h3 class="text-3xl font-bold mb-8">4. Código Base (Plantilla Inicial)</h3>
+            <div class="card max-w-4xl mx-auto border-2 border-gray-300">
+                <p class="text-lg text-gray-700 mb-4">Usa esta estructura para resolver el problema. Revisa la ayuda al inicio.</p>
+                <div class="code-block">
+<span class="comment">/*
+  === AYUDA RÁPIDA PARA EL EXAMEN ===
+
+  CONCEPTOS BÁSICOS:
+  - int: Variable para números enteros (ej: 10, 255).
+  - String: Variable para texto (ej: "HOLA").
+  - bool: Variable de estado/bandera, solo puede ser true (verdadero) o false (falso).
+
+  FUNCIONES DE COMUNICACIÓN SERIAL:
+  - Serial.available(): Nos dice si hay datos esperando en el puerto serial (>0).
+  - Serial.peek(): "Mira" el primer carácter que llegó SIN borrarlo. Perfecto para decidir si es número o letra.
+  - isDigit(caracter): Devuelve true si el carácter es un número ('0'-'9').
+  - Serial.parseInt(): Lee un número entero completo del puerto serial.
+  - Serial.readStringUntil('\n'): Lee una palabra completa hasta que encuentra un salto de línea (Enter).
+
+  FUNCIONES DE CONTROL:
+  - map(valor, 0, 1023, 0, 100): Útil para convertir el potenciómetro a porcentaje.
+  - analogWrite(pin, valor): Escribe un valor PWM (0-255).
+
+  PISTAS PARA TU LÓGICA:
+  1. Usa "Banderas" (variables bool) para recordar en qué modo estás.
+     Ej: bool modoRemoto = false; bool emergencia = false;
+  2. El orden importa en tu IF principal:
+     - Primero verifica si hay EMERGENCIA.
+     - Si no, verifica si estás en modo REMOTO.
+     - Si no, usa el modo MANUAL (potenciómetro).
+  3. Para comparar texto usa: comando.equalsIgnoreCase("A")
+*/</span>
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="comment">// 1. Comprobar si hay datos en el puerto serial</span>
+  <span class="keyword">if</span> (<span class="function">Serial</span>.<span class="function">available</span>() > <span class="number">0</span>) {
+    
+    <span class="comment">// TRUCO: 'Espiamos' el primer carácter sin quitarlo de la memoria</span>
+    <span class="type">char</span> primerCaracter = <span class="function">Serial</span>.<span class="function">peek</span>();
+
+    <span class="comment">// 2. ¿Es un número (dígito)?</span>
+    <span class="keyword">if</span> (<span class="function">isDigit</span>(primerCaracter)) {
+      <span class="comment">// --- LÓGICA DE NÚMERO (MODO REMOTO) ---</span>
+      <span class="type">int</span> potenciaRecibida = <span class="function">Serial</span>.<span class="function">parseInt</span>(); 
+      
+      <span class="comment">// TODO: 1. Actualizar tu variable de 'potencia' con este valor recibido.</span>
+      <span class="comment">// TODO: 2. Activar una variable (bandera) que indique que estamos en Modo Remoto.</span>
+      
+      <span class="function">Serial</span>.<span class="function">println</span>(<span class="string">"Modo Remoto Activado: Potencia fijada"</span>);
+    } 
+    <span class="keyword">else</span> {
+      <span class="comment">// --- LÓGICA DE COMANDO (LETRA) ---</span>
+      <span class="type">String</span> comando = <span class="function">Serial</span>.<span class="function">readStringUntil</span>(<span class="string">'\n'</span>); 
+      comando.<span class="function">trim</span>(); <span class="comment">// Quitamos espacios basura</span>
+      
+      <span class="keyword">if</span> (comando.<span class="function">equalsIgnoreCase</span>(<span class="string">"A"</span>) || comando.<span class="function">equalsIgnoreCase</span>(<span class="string">"ALTO"</span>)) {
+         <span class="comment">// TODO: Activar una variable (bandera) de EMERGENCIA o BLOQUEO.</span>
+         <span class="function">Serial</span>.<span class="function">println</span>(<span class="string">"¡EMERGENCIA ACTIVADA!"</span>);
+      }
+      <span class="keyword">else if</span> (comando.<span class="function">equalsIgnoreCase</span>(<span class="string">"R"</span>)) {
+         <span class="comment">// TODO: 1. Desactivar la variable de EMERGENCIA.</span>
+         <span class="comment">// TODO: 2. Desactivar la variable de Modo Remoto (volver a Manual).</span>
+         <span class="function">Serial</span>.<span class="function">println</span>(<span class="string">"Sistema Reiniciado - Manual"</span>);
+      }
+    }
+    
+    <span class="comment">// Limpieza del buffer serial</span>
+    <span class="keyword">while</span>(<span class="function">Serial</span>.<span class="function">available</span>() > <span class="number">0</span>) <span class="function">Serial</span>.<span class="function">read</span>(); 
+  }
+
+  <span class="comment">// --- LÓGICA PRINCIPAL DEL SISTEMA ---</span>
+  <span class="comment">// Aquí es donde debes decidir qué hacer con los LEDs basado en tus variables (banderas):</span>
+  
+  <span class="comment">// 1. Verificar si hay EMERGENCIA activada (Botón Físico o Comando 'A')</span>
+  <span class="comment">//    -> Si SI: Apagar todo, parpadear Rojo.</span>
+  
+  <span class="comment">// 2. Si NO hay emergencia, verificar si estamos en MODO REMOTO</span>
+  <span class="comment">//    -> Si SI: Usar la 'potenciaRecibida' para encender la barra.</span>
+  <span class="comment">//    -> Si NO: Leer Potenciómetro (A0), mapear a %, y usar eso para la barra.</span>
+  
+  <span class="comment">// 3. Finalmente, controlar los LEDs según el % de potencia decidido.</span>
+}
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-20">
+            <h3 class="text-3xl font-bold mb-8 text-center">Rúbrica de Evaluación</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="py-3 px-6 text-left">Criterio</th>
+                            <th class="py-3 px-6 text-left">Detalle</th>
+                            <th class="py-3 px-6 text-center">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        <tr class="border-b">
+                            <td class="py-3 px-6 font-bold">Lectura Serial Inteligente</td>
+                            <td class="py-3 px-6">Distingue correctamente entre números (potencia) y letras (comandos) e implementa la lógica de banderas.</td>
+                            <td class="py-3 px-6 text-center">40</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-6 font-bold">Barra de LEDs</td>
+                            <td class="py-3 px-6">Lógica acumulativa correcta (1, 1+2, 1+2+3...).</td>
+                            <td class="py-3 px-6 text-center">20</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="py-3 px-6 font-bold">Control Remoto vs Manual</td>
+                            <td class="py-3 px-6">El sistema cambia a modo Remoto al recibir un número y vuelve a Manual al recibir "R".</td>
+                            <td class="py-3 px-6 text-center">20</td>
+                        </tr>
+                        <tr class="border-b bg-gray-50">
+                            <td class="py-3 px-6 font-bold">Seguridad</td>
+                            <td class="py-3 px-6">Respuesta a "A"/"ALTO" y botón físico. Desbloqueo solo con "R".</td>
+                            <td class="py-3 px-6 text-center">20</td>
+                        </tr>
+                        <tr class="bg-green-100 font-bold">
+                            <td class="py-3 px-6">TOTAL</td>
+                            <td class="py-3 px-6"></td>
+                            <td class="py-3 px-6 text-center">100</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="text-center">
+            <a href="https://www.tinkercad.com/circuits" target="_blank" class="inline-block bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition transform hover:scale-105">
+                Abrir Entorno de Examen (Tinkercad)
+            </a>
+        </section>
+
+    </main>
+</body>
+</html>

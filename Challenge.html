@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reto de Compuertas Lógicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .truth-table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        .truth-table th, .truth-table td {
+            border: 1px solid #d1d5db;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        .truth-table th {
+            background-color: #f3f4f6;
+        }
+        .truth-table input {
+            width: 50px;
+            text-align: center;
+            border: 2px solid #d1d5db;
+            border-radius: 0.25rem;
+        }
+        .truth-table input.correct {
+            border-color: #22c55e;
+            background-color: #dcfce7;
+        }
+        .truth-table input.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold text-gray-900">Reto de Lógica: Sistema de Votación Electrónica</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="card max-w-5xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Descripción del Problema</h2>
+            <p class="text-lg text-gray-700 mb-6">
+                Has sido contratado para diseñar la lógica de una máquina de votación simple para un comité de 3 miembros: un Presidente (P), un Vicepresidente (V) y un Secretario (S). La máquina debe encender una luz verde (Salida = 1) si una moción es aprobada. Las reglas para la aprobación son las siguientes:
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-lg bg-gray-50 p-6 rounded-lg mb-8">
+                <li>La moción se aprueba si el Presidente vota 'SÍ' <strong>Y</strong> al menos uno de los otros dos miembros (Vicepresidente o Secretario) vota 'SÍ'.</li>
+                <li><strong>Excepción de Seguridad:</strong> Si el Vicepresidente y el Secretario tienen votos <span class="font-bold">diferentes</span> (uno 'SÍ' y el otro 'NO'), el sistema debe entrar en un estado de verificación y la moción <span class="font-bold">NO</span> se aprueba, sin importar el voto del Presidente. Esto se implementa para asegurar que no haya un posible error en el registro de votos.</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mb-4">Solución Lógica y Componentes</h2>
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-2">Ecuación Lógica Derivada:</h3>
+                <p class="text-lg font-mono bg-gray-200 p-3 rounded-md">Salida = (P · (V + S)) · ¬(V ⊕ S)</p>
+                <p class="text-md text-gray-600 mt-2">Donde <code class="font-mono">·</code> es AND, <code class="font-mono">+</code> es OR, <code class="font-mono">¬</code> es NOT, y <code class="font-mono">⊕</code> es XOR.</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Circuitos Integrados Necesarios:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <p class="font-bold">1x 7408</p>
+                        <p class="text-sm">Compuerta AND Cuádruple</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <p class="font-bold">1x 7432</p>
+                        <p class="text-sm">Compuerta OR Cuádruple</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <p class="font-bold">1x 7486</p>
+                        <p class="text-sm">Compuerta XOR Cuádruple</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <p class="font-bold">1x 7404</p>
+                        <p class="text-sm">Inversor séxtuple (NOT)</p>
+                    </div>
+                </div>
+                 <p class="text-sm text-gray-500 mt-4">Nota: Necesitarás 2 compuertas AND, 1 OR, 1 XOR y 1 NOT. Todos los CIs tienen compuertas de sobra que no se utilizarán para este circuito específico.</p>
+            </div>
+
+
+            <div class="mt-10 bg-gray-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold my-4">Completa la Tabla de Verdad para Verificar</h3>
+                <table id="challenge-truth-table" class="truth-table">
+                    <thead>
+                        <tr><th>Presidente (P)</th><th>Vice (V)</th><th>Secretario (S)</th><th>Aprobado (Salida)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="0"></td></tr>
+                        <tr><td>0</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="1"></td></tr>
+                        <tr><td>0</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="2"></td></tr>
+                        <tr><td>0</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="3"></td></tr>
+                        <tr><td>1</td><td>0</td><td>0</td><td><input type="text" maxlength="1" data-row="4"></td></tr>
+                        <tr><td>1</td><td>0</td><td>1</td><td><input type="text" maxlength="1" data-row="5"></td></tr>
+                        <tr><td>1</td><td>1</td><td>0</td><td><input type="text" maxlength="1" data-row="6"></td></tr>
+                        <tr><td>1</td><td>1</td><td>1</td><td><input type="text" maxlength="1" data-row="7"></td></tr>
+                    </tbody>
+                </table>
+                <div class="text-center mt-6">
+                    <button id="check-btn" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition">Verificar Tabla</button>
+                    <p id="feedback" class="mt-4 text-lg font-medium h-6"></p>
+                </div>
+            </div>
+
+            <div id="solution" class="hidden mt-8 p-6 bg-green-50 border-2 border-green-200 rounded-lg">
+                 <h3 class="text-2xl font-bold text-green-800 mb-4">Análisis de la Solución</h3>
+                 <p class="text-lg mb-4">La clave para resolver este problema es darle prioridad a la condición de seguridad. La condición "Vicepresidente y Secretario tienen votos diferentes" se traduce directamente a una compuerta **XOR**.</p>
+                 <p class="text-lg mb-2"><strong class="font-mono">Condición de Bloqueo = V ⊕ S</strong></p>
+                 <p class="text-lg mb-4">El sistema se bloquea (forzando la salida a 0) si <code class="font-mono bg-gray-200 p-1 rounded">(V XOR S)</code> es 1. Por lo tanto, para que la moción pueda ser aprobada, la condición de bloqueo debe ser 0. Esto se logra con <code class="font-mono bg-gray-200 p-1 rounded">NOT (V XOR S)</code>, que es una compuerta **XNOR**.</p>
+                 <p class="text-lg mb-2"><strong class="font-mono">Regla de Aprobación = P AND (V OR S)</strong></p>
+                 <p class="text-lg mb-4">Esta es la regla principal de votación.</p>
+                 <p class="text-lg">Para obtener la salida final, ambas condiciones deben cumplirse: la regla de aprobación debe ser verdadera <strong>Y</strong> la condición de bloqueo debe ser falsa.</p>
+                 <p class="text-lg font-bold mt-4">Ecuación Final: <code class="font-mono bg-gray-200 p-1 rounded">Salida = (P AND (V OR S)) AND NOT(V XOR S)</code></p>
+                 <p class="text-lg mt-2">Esta ecuación combina la regla principal con la anulación de la excepción de seguridad, utilizando compuertas AND, OR y XOR (o su negación, XNOR).</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const checkBtn = document.getElementById('check-btn');
+        const feedback = document.getElementById('feedback');
+        const solutionDiv = document.getElementById('solution');
+        const tableInputs = document.querySelectorAll('#challenge-truth-table input');
+        
+        // Lógica: Salida = (P AND (V OR S)) AND NOT(V XOR S)
+        const correctAnswers = [
+            // P, V, S -> Salida
+            0, // 0, 0, 0 -> (0 AND 0) AND NOT(0) = 0 AND 1 = 0
+            0, // 0, 0, 1 -> (0 AND 1) AND NOT(1) = 0 AND 0 = 0
+            0, // 0, 1, 0 -> (0 AND 1) AND NOT(1) = 0 AND 0 = 0
+            0, // 0, 1, 1 -> (0 AND 1) AND NOT(0) = 0 AND 1 = 0
+            0, // 1, 0, 0 -> (1 AND 0) AND NOT(0) = 0 AND 1 = 0
+            0, // 1, 0, 1 -> (1 AND 1) AND NOT(1) = 1 AND 0 = 0
+            0, // 1, 1, 0 -> (1 AND 1) AND NOT(1) = 1 AND 0 = 0
+            1  // 1, 1, 1 -> (1 AND 1) AND NOT(0) = 1 AND 1 = 1
+        ];
+
+        checkBtn.addEventListener('click', () => {
+            let allCorrect = true;
+            tableInputs.forEach((input, index) => {
+                const isCorrect = parseInt(input.value) === correctAnswers[index];
+                input.classList.remove('correct', 'incorrect');
+                if (input.value !== '') {
+                   input.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+                if (input.value === '' || !isCorrect) {
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                feedback.textContent = '¡Tabla de Verdad Correcta! ¡Excelente trabajo!';
+                feedback.style.color = '#22c55e';
+                solutionDiv.classList.remove('hidden');
+            } else {
+                feedback.textContent = 'Algunos valores en la tabla son incorrectos. Revisa la lógica.';
+                feedback.style.color = '#ef4444';
+                solutionDiv.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
+

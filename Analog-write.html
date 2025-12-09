@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 12: Salidas Analógicas y Mapeo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .code-block .keyword { color: #93c5fd; } 
+        .code-block .type { color: #818cf8; } 
+        .code-block .function { color: #a78bfa; } 
+        .code-block .comment { color: #64748b; } 
+        .code-block .string { color: #f472b6; } 
+        .code-block .number { color: #34d399; }
+        .code-block .operator { color: #f472b6; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Robótica y Electrónica 1</h1>
+                <p class="text-sm text-gray-600">Clase 12: Salidas Analógicas y Mapeo</p>
+            </div>
+            <div class="text-sm font-medium hidden md:flex space-x-4">
+                <a href="#warmup" class="text-gray-600 hover:text-blue-600">Repaso</a>
+                <a href="#analog-out" class="text-gray-600 hover:text-blue-600">Salidas PWM</a>
+                <a href="#mapping" class="text-gray-600 hover:text-blue-600">Función map()</a>
+                <a href="#activity" class="text-gray-600 hover:text-blue-600">Actividades</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="warmup" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Repaso: Reto de la Clase 11</h3>
+            <div class="card max-w-4xl mx-auto">
+                <h4 class="text-2xl font-bold text-center mb-4">Calentamiento: Luz Nocturna Simple</h4>
+                <p class="text-lg text-gray-600 text-center mb-6">Como no tuvimos tiempo de completar el reto de la Clase 11, vamos a usarlo como calentamiento. El objetivo es construir un circuito con una <strong>fotoresistencia (LDR)</strong> y un <strong>LED</strong>.</p>
+                <div class="bg-gray-100 p-6 rounded-lg">
+                    <p class="font-semibold text-lg">Tu Tarea:</p>
+                    <p class="mb-4">Escribe un programa donde el LED (en el pin 13) se encienda (<code>HIGH</code>) solo cuando el valor del sensor de luz (en A1) sea bajo (ej. menor a 300), y se apague (<code>LOW</code>) cuando sea alto.</p>
+                    <p class="font-semibold">Pasos:</p>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>Construye el circuito de la LDR (Actividad 2, Clase 11) y añade un LED al pin 13.</li>
+                        <li>Escribe el código usando <code>analogRead()</code> y una estructura <code>if/else</code>.</li>
+                        <li>Simula en Tinkercad para probar tu lógica.</li>
+                    </ol>
+                </div>
+                <p class="mt-6 text-xl text-center font-semibold">Una vez que termines, piensa: ¿Cómo podríamos hacer que el LED brille <span class="text-blue-600">un poco</span> con poca luz y <span class="text-blue-600">mucho</span> en total oscuridad?</p>
+            </div>
+        </section>
+        
+        <section id="analog-out" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Simulando Intensidad: Salidas PWM</h3>
+            <div class="card max-w-4xl mx-auto">
+                <h4 class="text-2xl font-bold mb-4">Salidas Analógicas Falsas (PWM)</h4>
+                <p class="mb-4">El Arduino no puede crear un voltaje analógico real (como 2.5V). En su lugar, simula uno usando <strong>Modulación por Ancho de Pulso (PWM)</strong>. Enciende y apaga un pin digital muy rápido.</p>
+                <p class="mb-4">El <strong>"Ciclo de Trabajo" (Duty Cycle)</strong> es el porcentaje de tiempo que la señal está en ALTO. Al variar este ciclo, controlamos el brillo percibido por el ojo humano.</p>
+
+                <h5 class="text-xl font-bold mb-2 mt-6">¿Por qué Funciona Esta "Simulación"?</h5>
+                <p class="mb-4">La clave es la <strong>velocidad</strong>. El Arduino enciende y apaga el pin cientos de veces por segundo (una frecuencia de ~490 Hz o ~980 Hz, dependiendo del pin).</p>
+                <ul class="list-disc list-inside space-y-2 mb-4">
+                    <li><strong>Para un LED:</strong> Nuestros ojos no son lo suficientemente rápidos para ver este parpadeo. En su lugar, nuestro cerebro promedia la cantidad de luz que recibe. Un pin que está encendido solo el 25% del tiempo (<code>analogWrite(pin, 64)</code>) se ve mucho más tenue que uno que está encendido el 90% del tiempo (<code>analogWrite(pin, 230)</code>). Este efecto se llama <strong>Persistencia de la Visión</strong>.</li>
+                    <li><strong>Para un Motor:</strong> Ocurre algo similar. Un motor tiene <strong>inercia</strong>; no puede arrancar y frenar 500 veces por segundo. En lugar de vibrar, promedia estos "empujones" y gira a una velocidad proporcional al ciclo de trabajo.</li>
+                </ul>
+                <p class="mb-4">En ambos casos, estamos convirtiendo una señal digital pulsada en una respuesta analógica promedio gracias a un efecto físico (persistencia de la visión o inercia).</p>
+                
+                <img src="https://i1.wp.com/d32zx1or0t1x0y.cloudfront.net/2011/06/atmega168a_pwm_02_lrg.jpg" alt="Gráfico de señales PWM con diferentes ciclos de trabajo" class="rounded-lg shadow-md my-6 mx-auto bg-white" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Gráfico+PWM';">
+
+                <div class="bg-gray-100 p-4 rounded-lg mb-6">
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><strong>Ciclo de 0%:</strong> <code>analogWrite(pin, 0)</code> -> LED apagado (0V promedio).</li>
+                        <li><strong>Ciclo de 50%:</strong> <code>analogWrite(pin, 127)</code> -> LED a medio brillo (2.5V promedio).</li>
+                        <li><strong>Ciclo de 100%:</strong> <code>analogWrite(pin, 255)</code> -> LED a máximo brillo (5V promedio).</li>
+                    </ul>
+                </div>
+                <h5 class="text-xl font-bold mb-2">La Función `analogWrite()`</h5>
+                <p class="mb-4">Usamos esta función para generar una señal PWM. <strong>Importante:</strong> Solo funciona en pines marcados con una tilde (~) en la placa Arduino (ej: 3, 5, 6, 9, 10, 11).</p>
+                <div class="code-block">
+<span class="type">const int</span> ledPin <span class="operator">=</span> <span class="number">9</span>; <span class="comment">// Un pin PWM (marcado con ~)</span>
+
+<span class="type">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(ledPin, <span class="keyword">OUTPUT</span>);
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Establece el brillo a la mitad (rango es 0-255)</span>
+  <span class="function">analogWrite</span>(ledPin, <span class="number">127</span>); 
+}
+                </div>
+            </div>
+        </section>
+
+        <section id="mapping" class="mb-20 fade-in">
+             <h3 class="text-4xl font-bold text-center mb-12">Conectando Mundos: La Función `map()`</h3>
+             <div class="card max-w-4xl mx-auto">
+                <h4 class="text-2xl font-bold mb-4">El Problema: Rangos Incompatibles</h4>
+                <p class="mb-4">Tenemos un problema. Nuestro sensor (<code>analogRead</code>) nos da valores de <strong>0 a 1023</strong>. Pero nuestro actuador (<code>analogWrite</code>) espera valores de <strong>0 a 255</strong>.</p>
+                <p class="mb-4">La función <code>map()</code> es una regla de tres simple que "traduce" o escala un número de un rango a otro.</p>
+                <h5 class="text-xl font-bold mb-2">Sintaxis:</h5>
+                <div class="code-block">
+<span class="comment">// map(valor, min_original, max_original, min_nuevo, max_nuevo)</span>
+
+<span class="type">int</span> valorSensor <span class="operator">=</span> <span class="function">analogRead</span>(A0); <span class="comment">// Valor entre 0 y 1023</span>
+
+<span class="comment">// Convierte el rango 0-1023 al rango 0-255</span>
+<span class="type">int</span> brilloLed <span class="operator">=</span> <span class="function">map</span>(valorSensor, <span class="number">0</span>, <span class="number">1023</span>, <span class="number">0</span>, <span class="number">255</span>); 
+
+<span class="function">analogWrite</span>(ledPin, brilloLed); <span class="comment">// Usa el valor mapeado</span>
+                </div>
+             </div>
+        </section>
+
+        <section id="activity" class="mb-20 fade-in">
+            <h3 class="text-4xl font-bold text-center mb-12">Actividades Prácticas</h3>
+            <div class="space-y-8">
+                 <div class="card max-w-4xl mx-auto">
+                    <h4 class="text-2xl font-bold text-center mb-4">Actividad 1: Efecto "Respiración" (Fade)</h4>
+                    <p class="text-lg text-gray-600 text-center mb-6">Practiquemos <code>analogWrite</code>. Escribe un programa que haga que un LED conectado al pin 9 aumente su brillo gradualmente de 0 a 255 y luego disminuya de 255 a 0, repitiendo el ciclo. (Pista: ¡Usa dos bucles <code>for</code>!).</p>
+                    
+                    <h5 class="text-xl font-bold mb-2">Pasos:</h5>
+                    <ol class="list-decimal list-inside space-y-1 mb-4">
+                        <li>Construye el circuito en Tinkercad (LED + Resistencia en pin 9).</li>
+                        <li>En el <code>loop()</code>, crea un bucle <code>for</code> que incremente <code>i</code> de 0 a 255. Dentro, usa <code>analogWrite(ledPin, i)</code> y un <code>delay(10)</code>.</li>
+                        <li>Crea un segundo bucle <code>for</code> que decremente <code>i</code> de 255 a 0. Dentro, usa <code>analogWrite(ledPin, i)</code> y un <code>delay(10)</code>.</li>
+                        <li>Simula y observa el efecto. Luego, ¡constrúyelo!</li>
+                    </ol>
+                </div>
+
+                <div class="card max-w-4xl mx-auto bg-blue-50 border-2 border-blue-200">
+                    <h4 class="text-2xl font-bold text-center mb-4 text-blue-700">Actividad 2 (Reto): Perilla de Brillo</h4>
+                    <p class="text-lg text-gray-700 text-center mb-6">¡Este es el reto principal! Vamos a construir un "dimmer" real. Usa un potenciómetro para controlar directamente el brillo de un LED.</p>
+                     
+                     <h5 class="text-xl font-bold mb-2">Pasos:</h5>
+                    <ol class="list-decimal list-inside space-y-1 mb-4">
+                        <li><strong>Circuito:</strong> Conecta un potenciómetro a 5V, GND y A0. Conecta un LED (con resistencia) al pin PWM ~9.</li>
+                        <li><strong>Código:</strong>
+                            <ul class="list-disc list-inside ml-4">
+                                <li>En <code>loop()</code>, lee el valor del potenciómetro (A0) con <code>analogRead()</code> y guárdalo en una variable.</li>
+                                <li>Usa <code>map()</code> para convertir ese valor (rango 0-1023) al rango del LED (0-255).</li>
+                                <li>Usa el nuevo valor mapeado con <code>analogWrite()</code> para controlar el brillo del LED en el pin 9.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Prueba:</strong> Simula en Tinkercad. Al girar el potenciómetro, el brillo del LED debe cambiar.</li>
+                        <li><strong>Construye:</strong> ¡Arma el circuito en tu protoboard!</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
+
